@@ -1,0 +1,65 @@
+\documentclass[a4paper,10pt]{ltjsarticle}
+
+\usepackage{_my_style}
+\renewcommand{\labelitemi}{・}
+\renewcommand{\labelitemii}{・}
+
+\begin{document}
+
+% title
+% author
+% date
+\begin{center}
+  {\LARGE 入力情報の整理}\
+  \vskip6.5pt
+  {\large たけうち}\
+  \vskip2pt
+  {\large }
+\end{center}
+\section*{入力まとめ}
+入力は以下のように与えられます.
+\begin{equation*}
+  \begin{array}{ccc}
+    L & N &  \\
+    T_1 &  & \\
+    t_{1,1} & b_{1,1} & m_{1,1} \\
+    \vdots && \\
+    t_{1, T_1} & b_{1, T_1} & m_{1, T_1}\\
+    \vdots \\
+    T_N \\
+    t_{N,1} & b_{N,1} & m_{N,1}\\
+    \vdots \\
+    t_{N, T_N} & b_{N, T_N} & m_{N, T_N}
+  \end{array}
+\end{equation*}
+
+
+$1$ 行目は,最初の勇者の強さ$L$,タワーの数$N$が与えられます.
+
+続く$2$行目に,$1$つ目のタワーの高さが与えられます.以下に続く$T_1$行の上から$i\ (1\leq i \leq T_1)$行には,$i$階の情報$t,b,m$が与えられます.
+
+この下に,同様のものが$N-1$個に続いています.
+
+\subsection*{入力制限}
+
+入力はすべて$1$以上の整数です.
+
+\section*{フロアの情報まとめ}
+フロアの情報が$t,b,m$であるような場所に勇者が行ったとき,勇者の強さの変動が記されています.
+\begin{itemize}
+  \item $t=1$のとき,敵がいることを表します.このとき,勇者の強さが$m$以下場合無効となります.
+    \begin{itemize}
+      \item $b = 1$ のとき,勇者の強さは$+m$されます.
+      \item $b = 2$ のとき,勇者の強さは$\times m$されます.
+    \end{itemize}
+  \item $t=2$のとき,装備や薬があることを表します.
+    \begin{itemize}
+      \item $b = 1$のとき,勇者の強さは$+m$されます.
+      \item $b = 2$のとき,勇者の強さは$-m$されます.ここで,勇者の強さが$0$以下となった場合無効となります.
+      \item $b = 3$ のとき,勇者の強さは$\times m$されます.
+      \item $b = 4$のとき,勇者の強さは$// m$されます.($m$で割ったときの商)ここで,勇者の強さが$0$以下となった場合無効となります.
+    \end{itemize}
+\end{itemize}
+
+
+\end{document}

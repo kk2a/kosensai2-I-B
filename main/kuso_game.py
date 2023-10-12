@@ -12,6 +12,10 @@ class App:
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
+        
+        # この動作は変わる
+        if self.fighter_now >= self.tower_num:
+            pyxel.quit()
 
 
     def draw(self):
@@ -27,6 +31,9 @@ class App:
     def update_slide(self):
         if self.left_slide != self.fighter_now * 110:
             self.left_slide += 22
+        elif self.passed == len(self.tower_info[self.fighter_now]):
+            self.passed = 0
+            self.fighter_now += 1
 
     def update_fighter(self):
         if (
@@ -43,9 +50,10 @@ class App:
                     self.is_fighting = True
                     self.on_fighting = floor_idx
 
-
+    # 最後はボスにするかもしれないので確定ではない
     def draw_tower(self):
         slide = self.left_slide
+        
         pyxel.rectb(40 - slide, 240, 60, 50, 0)
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
@@ -54,13 +62,15 @@ class App:
 
     def info(self):
         self.fighter_now = 0 # 現在何棟目か
-        self.left_slide = 0
+        self.passed = 0 # 現在の棟でいくつ通ったか
+        self.left_slide = 0 # いくつスライドさせるかは共通で保持
+
 
         # Trueなら下の数字の階で戦っている
         self.is_fighting = False
         self.on_fighting = -1 
 
-        with open('./choimuzu.txt') as f:
+        with open('./test_easy.txt') as f:
             line = f.readline()
 
             # rstripはいらないかもだけど怖いから入れておきます

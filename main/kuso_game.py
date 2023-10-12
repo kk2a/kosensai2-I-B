@@ -36,10 +36,46 @@ class App:
             self.fighter_now += 1
 
     def update_fighter(self):
-        if (
+        if self.is_fighting:
+            t, b, m = self.tower_info[self.fighter_now][self.on_fighting]
+            
+            # 敵がいた
+            if t == 1 and self.fighter_strength >= m:
+                # +
+                if b == 1:
+                    self.fighter_strength += m
+
+                # *
+                else :
+                    self.fighter_strength *= m
+
+            # 装備or薬
+            elif t == 2:
+                # +
+                if b == 1:
+                    self.fighter_strength += m
+                
+                # -
+                if b == 2 and self.fighter_strength > m:
+                    self.fighter_strength -= m
+                
+                # * 
+                if b == 3:
+                    self.fighter_strength *= m
+                
+                # //
+                if b == 4 and self.fighter_strength >= m:
+                    self.fighter_strength //= m
+
+            self.tower_info[self.fighter_now][self.on_fighting] = 0, 0, 0
+
+            self.is_fighting = False
+            self.on_fighting = -1
+            self.passed += 1
+
+        elif (
             pyxel.btn(pyxel.MOUSE_BUTTON_LEFT) and
-            self.left_slide != self.fighter_now * 110 and 
-            not(self.is_fighting)
+            self.left_slide != self.fighter_now * 110
         ):
             if (
                 pyxel.mouse_x >= 150 and
@@ -49,11 +85,13 @@ class App:
                 if (0 <= floor_idx and floor_idx < len(self.tower_info[self.fighter_now])):
                     self.is_fighting = True
                     self.on_fighting = floor_idx
+        
+        
 
     # 最後はボスにするかもしれないので確定ではない
     def draw_tower(self):
         slide = self.left_slide
-        
+
         pyxel.rectb(40 - slide, 240, 60, 50, 0)
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
@@ -65,16 +103,15 @@ class App:
         self.passed = 0 # 現在の棟でいくつ通ったか
         self.left_slide = 0 # いくつスライドさせるかは共通で保持
 
-
         # Trueなら下の数字の階で戦っている
         self.is_fighting = False
         self.on_fighting = -1 
 
-        with open('./test_easy.txt') as f:
+        with open('./choimuzu.txt') as f:
             line = f.readline()
 
             # rstripはいらないかもだけど怖いから入れておきます
-            self.yuusha_strength, self.tower_num = map(int, line.rstrip("\n").split())
+            self.fighter_strength, self.tower_num = map(int, line.rstrip("\n").split())
             self.tower_info = []
             for _ in range(self.tower_num):
                 line = f.readline()

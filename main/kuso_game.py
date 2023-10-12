@@ -17,7 +17,9 @@ class App:
     def draw(self):
         pyxel.cls(1)
         self.update_slide()
-        # self.draw_tower()
+        self.draw_tower()
+
+        # debug
         pyxel.text(50, 50, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
         floor_idx = (290 - pyxel.mouse_y) // 50
         pyxel.text(0, 0, f"{floor_idx}", 0)
@@ -42,12 +44,13 @@ class App:
                     self.on_fighting = floor_idx
 
 
-    # def draw_tower(self, x):
-    #     pyxel.rectb(40, 240, 60, 50, 0)
-    #     for i in range(5):
-    #         pyxel.rectb(150, 240 - 50 * i, 60, 50, 0)
-    #     # pyxel.rectb(150, 190, 60, 50, 0)
-    #     pyxel.rectb(260, 240, 60, 50, 0)
+    def draw_tower(self):
+        slide = self.left_slide
+        pyxel.rectb(40 - slide, 240, 60, 50, 0)
+        for i in range(self.tower_num):
+            T = len(self.tower_info[i])
+            for j in range(T):
+                pyxel.rectb(40 + 100 * (i + 1) - slide, 240 - 50 * j, 60, 50, 0)
 
     def info(self):
         self.fighter_now = 0 # 現在何棟目か

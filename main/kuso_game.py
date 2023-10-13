@@ -16,7 +16,7 @@ class App:
         if self.fighter_now >= self.tower_num:
             pyxel.quit()
 
-        # slideが先!!!
+        # slideを後にすることで1フレームだけ戻るということがなくなる!!!
         self.update_fighter()
         self.update_slide()
 

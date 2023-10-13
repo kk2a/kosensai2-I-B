@@ -5,7 +5,7 @@ class App:
         pyxel.init(400, 300, title="kuso game")
         pyxel.mouse(True)
         self.info()
-
+        self.x = 0
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -22,14 +22,11 @@ class App:
 
     def draw(self):
         pyxel.cls(11)
-
         self.draw_tower()
         self.draw_fighter()
 
-        
-
         # debug
-        pyxel.text(50, 50, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
+        pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
         floor_idx = (290 - pyxel.mouse_y) // 50
         pyxel.text(0, 0, f"{floor_idx}", 0)
         pyxel.text(10, 10, f"{self.fighter_strength}", 0)
@@ -121,8 +118,9 @@ class App:
     def draw_tower(self):
         slide = self.left_slide
 
-        # タワーの描画
+        # タワー、敵の描画
         pyxel.rectb(40 - slide, 240, 60, 50, 0)
+        pyxel.load(self.load_path[1])
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
             for j in range(T):
@@ -135,7 +133,6 @@ class App:
                         f"{self.text[b * 2 - 2]}{m}",
                         8
                     )
-                    pyxel.load(self.load_path[1])
                     u = [
                         [28, 33, 0, 0, 0, 32, 32, 1],
                         [28, 20, 0, 8, 32, 32, 16, 15],
@@ -154,13 +151,37 @@ class App:
                         u[idx][6], 
                         u[idx][7]
                     )
-                elif t == 2:
+        
+        # 装備
+        pyxel.load(self.load_path[0])
+        for i in range(self.tower_num):
+            T = len(self.tower_info[i])
+            for j in range(T):
+                pyxel.rectb(40 + 100 * (i + 1) - slide, 240 - 50 * j, 60, 50, 0)
+                t, b, m, idx = self.tower_info[i][j]
+                if t == 2:
                     pyxel.text(
                         75 + 100 * (i + 1) - slide, 
                         242 - 50 * j, 
                         f"{self.text[b - 1]}{m}",
                         0
                     )
+                    u = [
+                        [35, 24, 0, 0, 216, 16, 23, 5],
+                        [35, 24, 0, 24, 216, 16, 23, 5],
+                        [35, 24, 0, 48, 216, 16, 23, 5]
+                    ]
+                    pyxel.blt(
+                        40 + 100 * (i + 1) - slide + u[idx][0],
+                        290 - 50 * j - u[idx][1],
+                        u[idx][2],
+                        u[idx][3],
+                        u[idx][4], 
+                        u[idx][5], 
+                        u[idx][6], 
+                        u[idx][7]
+                    )
+
 
     # ファイター
     def draw_fighter(self):
@@ -211,6 +232,7 @@ class App:
 
         # 
         self.enemy_num = 6
+        self.equip_num = 3
 
         # 演算表示
         self.text = ["+", "-", "x", "/"]
@@ -234,7 +256,7 @@ class App:
                     if b[0] == 1:
                         b.append(pyxel.rndi(0, self.enemy_num - 1))
                     else :
-                        b.append(-1)
+                        b.append(pyxel.rndi(0, self.equip_num - 1))
                     a.append(b)
                 self.tower_info.append(a)
 

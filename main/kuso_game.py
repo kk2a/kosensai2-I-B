@@ -1,5 +1,6 @@
 import pyxel
 
+
 class App:
     def __init__(self):
         pyxel.init(400, 300, title="kuso game")
@@ -55,11 +56,11 @@ class App:
                     self.fighter_strength += m
 
                 # *
-                elif b == 2 :
+                elif b == 2:
                     self.fighter_strength *= m
                 
                 # bad
-                else :
+                else:
                     f = False
 
             # 装備or薬
@@ -81,10 +82,10 @@ class App:
                     self.fighter_strength //= m
                 
                 # bad
-                else :
+                else:
                     f = False
             
-            else :
+            else:
                 f = False
 
             # ここでゲームオーバーだと思う
@@ -199,7 +200,7 @@ class App:
 
         # 元の位置にいる
         else :
-            i = (pyxel.frame_count - self.thinking) // 20 % 2
+            i = (pyxel.frame_count - self.thinking) // 20 % 2  # self.thinkingでいい感じ
             u = [
                 [0, 0, 16, 32, 40, 5],
                 [0, 32, 16, 32, 40, 5]
@@ -208,15 +209,15 @@ class App:
 
     # メンバ変数のまとめ
     def info(self):
-        self.fighter_now = 0 # 現在何棟目か
-        self.passed = 0 # 現在の棟でいくつ通ったか
-        self.left_slide = 0 # いくつスライドさせるかは共通で保持
+        self.fighter_now = 0  # 現在何棟目か
+        self.passed = 0  # 現在の棟でいくつ通ったか
+        self.left_slide = 0  # いくつスライドさせるかは共通で保持
 
         # Trueなら下の数字の階で戦っている
         self.is_fighting = False
         self.on_fighting = -1 
         self.fighting_time = 0
-        self.thinking = 0 # 自己満足です 
+        self.thinking = 0  # 自己満足です 
 
         # 
         self.load_path = [
@@ -255,11 +256,10 @@ class App:
 
                     if b[0] == 1:
                         b.append(pyxel.rndi(0, self.enemy_num - 1))
-                    else :
+                    else:
                         b.append(pyxel.rndi(0, self.equip_num - 1))
                     a.append(b)
                 self.tower_info.append(a)
-
 
 
 App()

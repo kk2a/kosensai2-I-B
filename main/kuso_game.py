@@ -1,5 +1,6 @@
 import pyxel
 
+
 class App:
     def __init__(self):
         pyxel.init(400, 300, title="kuso game")
@@ -55,11 +56,11 @@ class App:
                     self.fighter_strength += m
 
                 # *
-                elif b == 2 :
+                elif b == 2:
                     self.fighter_strength *= m
                 
                 # bad
-                else :
+                else:
                     f = False
 
             # 装備or薬
@@ -81,10 +82,10 @@ class App:
                     self.fighter_strength //= m
                 
                 # bad
-                else :
+                else:
                     f = False
             
-            else :
+            else:
                 f = False
 
             # ここでゲームオーバーだと思う
@@ -182,30 +183,29 @@ class App:
                         u[idx][7]
                     )
 
-
     # ファイター
     def draw_fighter(self):
         pyxel.load(self.load_path[0])
         # 戦っているときのアニメーション
         if self.is_fighting:
             # if self.tower_info[self.fighter_now][self.on_fighting][0] == 1:
-                i = self.fighting_time // 10 % 3
-                u = [
-                    [0, 32, 16, 32],
-                    [0, 32, 56, 32],
-                    [0, 64, 56, 40]
-                ]
-                pyxel.blt(142, 250 - 50 * self.on_fighting, u[i][0], u[i][1], u[i][2], u[i][3], 40, 5)
+            i = self.fighting_time // 10 % 3
+            u = [
+                [0, 32, 16, 32],
+                [0, 32, 56, 32],
+                [0, 64, 56, 40]
+            ]
+            pyxel.blt(142, 250 - 50 * self.on_fighting, u[i][0], u[i][1], u[i][2], u[i][3], 40, 5)
 
         # 元の位置にいる
-        else :
+        else:
             pyxel.blt(42 + self.fighter_now * 100 - self.left_slide, 250, 0, 0, 16, 32, 40, 5)
 
     # メンバ変数のまとめ
     def info(self):
-        self.fighter_now = 0 # 現在何棟目か
-        self.passed = 0 # 現在の棟でいくつ通ったか
-        self.left_slide = 0 # いくつスライドさせるかは共通で保持
+        self.fighter_now = 0  # 現在何棟目か
+        self.passed = 0  # 現在の棟でいくつ通ったか
+        self.left_slide = 0  # いくつスライドさせるかは共通で保持
 
         # Trueなら下の数字の階で戦っている
         self.is_fighting = False
@@ -255,11 +255,10 @@ class App:
 
                     if b[0] == 1:
                         b.append(pyxel.rndi(0, self.enemy_num - 1))
-                    else :
+                    else:
                         b.append(pyxel.rndi(0, self.equip_num - 1))
                     a.append(b)
                 self.tower_info.append(a)
-
 
 
 App()

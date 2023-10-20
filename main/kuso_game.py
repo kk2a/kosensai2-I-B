@@ -16,7 +16,6 @@ class App:
         if self.fighter_now >= self.tower_num:
             pyxel.quit()
 
-        
         # slideを後にすることで1フレームだけ戻るということがなくなる!!!
         self.update_fighter()
         self.update_slide()
@@ -44,11 +43,11 @@ class App:
 
     def update_fighter(self):
         # 攻撃後に数字は変動
-        if self.is_fighting and self.fighting_time >= 29:
+        if self.is_fighting and (pyxel.frame_count - self.fighting_time) >= 29:
             # input.pdfを参考にしてください
             t, b, m, _ = self.tower_info[self.fighter_now][self.on_fighting]
-            
             f = True
+            
             # 敵がいた
             if t == 1 and self.fighter_strength >= m:
                 # +
@@ -94,17 +93,13 @@ class App:
                 self.passed += 1
 
             self.is_fighting = False
-            self.fighting_time = 0
             self.thinking = pyxel.frame_count
-        
-        # まだ攻撃中
-        elif self.is_fighting:
-            self.fighting_time += 1
 
         # クリックされたとき
         elif (
             pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT) and
-            self.left_slide == self.fighter_now * 100
+            self.left_slide == self.fighter_now * 100 and
+            not(self.is_fighting)
         ):
             if (
                 pyxel.mouse_x >= 140 and
@@ -115,6 +110,7 @@ class App:
                     if self.tower_info[self.fighter_now][floor_idx][0] != 0:
                         self.is_fighting = True
                         self.on_fighting = floor_idx
+                        self.fighting_time = pyxel.frame_count
 
     # 最後はボスにするかもしれないので確定ではない
     def draw_tower(self):
@@ -189,13 +185,25 @@ class App:
         pyxel.load(self.load_path[0])
         # 戦っているときのアニメーション
         if self.is_fighting:
-            u = [
-                [0, 32, 16, 32, 40, 5],
-                [0, 32, 56, 32, 40, 5],
-                [0, 64, 56, 40, 40, 5]
-            ]
-            i = self.fighting_time // 10 % len(u)
-            pyxel.blt(142, 250 - 50 * self.on_fighting, u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5])
+            # 倒すときのアニメーション
+            if self.tower_info[self.fighter_now][self.on_fighting][0] == 1:
+                u = [
+                    [0, 32, 16, 32, 40, 5],
+                    [0, 32, 56, 32, 40, 5],
+                    [0, 64, 56, 40, 40, 5]
+                ]
+                i = (pyxel.frame_count - self.fighting_time) // 10 % len(u)
+                pyxel.blt(142, 250 - 50 * self.on_fighting, u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5])
+
+            # 装備などをとるときのアニメーション
+            elif self.tower_info[self.fighter_now][self.on_fighting][0] == 2:
+                u = [
+                    [0, 32, 16, 32, 40, 5],
+                    [0, 32, 56, 32, 40, 5],
+                    [0, 64, 56, 40, 40, 5]
+                ]
+                i = (pyxel.frame_count - self.fighting_time) // 10 % len(u)
+                pyxel.blt(142, 250 - 50 * self.on_fighting, u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5])
 
         # 元の位置にいる
         else :

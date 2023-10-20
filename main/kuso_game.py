@@ -189,22 +189,21 @@ class App:
         pyxel.load(self.load_path[0])
         # 戦っているときのアニメーション
         if self.is_fighting:
-            # if self.tower_info[self.fighter_now][self.on_fighting][0] == 1:
-                i = self.fighting_time // 10 % 3
-                u = [
-                    [0, 32, 16, 32, 40, 5],
-                    [0, 32, 56, 32, 40, 5],
-                    [0, 64, 56, 40, 40, 5]
-                ]
-                pyxel.blt(142, 250 - 50 * self.on_fighting, u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5])
+            u = [
+                [0, 32, 16, 32, 40, 5],
+                [0, 32, 56, 32, 40, 5],
+                [0, 64, 56, 40, 40, 5]
+            ]
+            i = self.fighting_time // 10 % len(u)
+            pyxel.blt(142, 250 - 50 * self.on_fighting, u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5])
 
         # 元の位置にいる
         else :
-            i = (pyxel.frame_count - self.thinking) // 20 % 2  # self.thinkingでいい感じ
             u = [
                 [0, 0, 16, 32, 40, 5],
                 [0, 32, 16, 32, 40, 5]
             ]
+            i = (pyxel.frame_count - self.thinking) // 20 % len(u)  # self.thinkingでいい感じ
             pyxel.blt(42 + self.fighter_now * 100 - self.left_slide, 250, u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5])
 
     # メンバ変数のまとめ
@@ -227,8 +226,8 @@ class App:
 
         # 
         self.problem_path = [
-            "./choimuzu.txt",
-            "./test_easy.txt"
+            "../assets/choimuzu.txt",
+            "../assets/test_easy.txt"
         ]
 
         # 

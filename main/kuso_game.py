@@ -5,7 +5,6 @@ class App:
         pyxel.init(400, 300, title="kuso game")
         pyxel.mouse(True)
         self.info()
-        self.x = 0
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -16,6 +15,7 @@ class App:
         if self.fighter_now >= self.tower_num:
             pyxel.quit()
 
+        
         # slideを後にすることで1フレームだけ戻るということがなくなる!!!
         self.update_fighter()
         self.update_slide()
@@ -94,6 +94,7 @@ class App:
 
             self.is_fighting = False
             self.fighting_time = 0
+            self.thinking = pyxel.frame_count
         
         # まだ攻撃中
         elif self.is_fighting:
@@ -182,7 +183,6 @@ class App:
                         u[idx][7]
                     )
 
-
     # ファイター
     def draw_fighter(self):
         pyxel.load(self.load_path[0])
@@ -191,15 +191,20 @@ class App:
             # if self.tower_info[self.fighter_now][self.on_fighting][0] == 1:
                 i = self.fighting_time // 10 % 3
                 u = [
-                    [0, 32, 16, 32],
-                    [0, 32, 56, 32],
-                    [0, 64, 56, 40]
+                    [0, 32, 16, 32, 40, 5],
+                    [0, 32, 56, 32, 40, 5],
+                    [0, 64, 56, 40, 40, 5]
                 ]
-                pyxel.blt(142, 250 - 50 * self.on_fighting, u[i][0], u[i][1], u[i][2], u[i][3], 40, 5)
+                pyxel.blt(142, 250 - 50 * self.on_fighting, u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5])
 
         # 元の位置にいる
         else :
-            pyxel.blt(42 + self.fighter_now * 100 - self.left_slide, 250, 0, 0, 16, 32, 40, 5)
+            i = (pyxel.frame_count - self.thinking) // 20 % 2
+            u = [
+                [0, 0, 16, 32, 40, 5],
+                [0, 32, 16, 32, 40, 5]
+            ]
+            pyxel.blt(42 + self.fighter_now * 100 - self.left_slide, 250, u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5])
 
     # メンバ変数のまとめ
     def info(self):
@@ -211,12 +216,7 @@ class App:
         self.is_fighting = False
         self.on_fighting = -1 
         self.fighting_time = 0
-
-        # ファイター何もしていないときのアニメーション
-        self.fighter_stop_animation = [
-            [0, 0, 16, 32, 40, 5],
-            [0, 0, 56, 32, 40, 5]
-        ]
+        self.thinking = 0 # 自己満足です 
 
         # 
         self.load_path = [

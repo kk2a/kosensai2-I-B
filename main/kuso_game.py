@@ -47,7 +47,7 @@ class App:
             # input.pdfを参考にしてください
             t, b, m, _ = self.tower_info[self.fighter_now][self.on_fighting]
             f = True
-            
+
             # 敵がいた
             if t == 1 and self.fighter_strength >= m:
                 # +
@@ -182,6 +182,8 @@ class App:
 
     # ファイター
     def draw_fighter(self):
+        slide = self.left_slide
+
         pyxel.load(self.load_path[0])
         # 戦っているときのアニメーション
         if self.is_fighting:
@@ -193,7 +195,16 @@ class App:
                     [0, 64, 56, 40, 40, 5]
                 ]
                 i = (pyxel.frame_count - self.fighting_time) // 10 % len(u)
-                pyxel.blt(142, 250 - 50 * self.on_fighting, u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5])
+                pyxel.blt(
+                    142,
+                    250 - 50 * self.on_fighting, 
+                    u[i][0], 
+                    u[i][1], 
+                    u[i][2], 
+                    u[i][3], 
+                    u[i][4], 
+                    u[i][5]
+                )
 
             # 装備などをとるときのアニメーション
             elif self.tower_info[self.fighter_now][self.on_fighting][0] == 2:
@@ -203,16 +214,34 @@ class App:
                     [0, 64, 56, 40, 40, 5]
                 ]
                 i = (pyxel.frame_count - self.fighting_time) // 10 % len(u)
-                pyxel.blt(142, 250 - 50 * self.on_fighting, u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5])
+                pyxel.blt(
+                    142,
+                    250 - 50 * self.on_fighting, 
+                    u[i][0], 
+                    u[i][1], 
+                    u[i][2], 
+                    u[i][3], 
+                    u[i][4], 
+                    u[i][5]
+                )
 
         # 元の位置にいる
-        else :
+        else:
             u = [
                 [0, 0, 16, 32, 40, 5],
                 [0, 32, 16, 32, 40, 5]
             ]
             i = (pyxel.frame_count - self.thinking) // 20 % len(u)  # self.thinkingでいい感じ
-            pyxel.blt(42 + self.fighter_now * 100 - self.left_slide, 250, u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5])
+            pyxel.blt(
+                42 + self.fighter_now * 100 - slide, 
+                250, 
+                u[i][0], 
+                u[i][1], 
+                u[i][2], 
+                u[i][3], 
+                u[i][4], 
+                u[i][5]
+            )
 
     # メンバ変数のまとめ
     def info(self):

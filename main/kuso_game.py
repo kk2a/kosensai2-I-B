@@ -11,7 +11,7 @@ class App:
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
-        
+
         # おめでとう的なのをしたい
         if self.fighter_now >= self.tower_num:
             pyxel.quit()
@@ -57,7 +57,7 @@ class App:
                 # *
                 elif b == 2:
                     self.fighter_strength *= m
-                
+
                 # bad
                 else:
                     f = False
@@ -67,23 +67,23 @@ class App:
                 # +
                 if b == 1:
                     self.fighter_strength += m
-                
+
                 # -
                 elif b == 2 and self.fighter_strength > m:
                     self.fighter_strength -= m
-                
-                # * 
+
+                # *
                 elif b == 3:
                     self.fighter_strength *= m
-                
+
                 # //
                 elif b == 4 and self.fighter_strength >= m:
                     self.fighter_strength //= m
-                
+
                 # bad
                 else:
                     f = False
-            
+
             else:
                 f = False
 
@@ -99,7 +99,7 @@ class App:
         elif (
             pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT) and
             self.left_slide == self.fighter_now * 100 and
-            not(self.is_fighting)
+            not (self.is_fighting)
         ):
             if (
                 pyxel.mouse_x >= 140 and
@@ -122,12 +122,13 @@ class App:
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
             for j in range(T):
-                pyxel.rectb(40 + 100 * (i + 1) - slide, 240 - 50 * j, 60, 50, 0)
+                pyxel.rectb(40 + 100 * (i + 1) - slide,
+                            240 - 50 * j, 60, 50, 0)
                 t, b, m, idx = self.tower_info[i][j]
                 if t == 1:
                     pyxel.text(
-                        75 + 100 * (i + 1) - slide, 
-                        242 - 50 * j, 
+                        75 + 100 * (i + 1) - slide,
+                        242 - 50 * j,
                         f"{self.text[b * 2 - 2]}{m}",
                         8
                     )
@@ -144,23 +145,24 @@ class App:
                         290 - 50 * j - u[idx][1],
                         u[idx][2],
                         u[idx][3],
-                        u[idx][4], 
-                        u[idx][5], 
-                        u[idx][6], 
+                        u[idx][4],
+                        u[idx][5],
+                        u[idx][6],
                         u[idx][7]
                     )
-        
+
         # 装備
         pyxel.load(self.load_path[0])
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
             for j in range(T):
-                pyxel.rectb(40 + 100 * (i + 1) - slide, 240 - 50 * j, 60, 50, 0)
+                pyxel.rectb(40 + 100 * (i + 1) - slide,
+                            240 - 50 * j, 60, 50, 0)
                 t, b, m, idx = self.tower_info[i][j]
                 if t == 2:
                     pyxel.text(
-                        75 + 100 * (i + 1) - slide, 
-                        242 - 50 * j, 
+                        75 + 100 * (i + 1) - slide,
+                        242 - 50 * j,
                         f"{self.text[b - 1]}{m}",
                         0
                     )
@@ -174,9 +176,9 @@ class App:
                         290 - 50 * j - u[idx][1],
                         u[idx][2],
                         u[idx][3],
-                        u[idx][4], 
-                        u[idx][5], 
-                        u[idx][6], 
+                        u[idx][4],
+                        u[idx][5],
+                        u[idx][6],
                         u[idx][7]
                     )
 
@@ -197,12 +199,12 @@ class App:
                 i = (pyxel.frame_count - self.fighting_time) // 10 % len(u)
                 pyxel.blt(
                     142,
-                    250 - 50 * self.on_fighting, 
-                    u[i][0], 
-                    u[i][1], 
-                    u[i][2], 
-                    u[i][3], 
-                    u[i][4], 
+                    250 - 50 * self.on_fighting,
+                    u[i][0],
+                    u[i][1],
+                    u[i][2],
+                    u[i][3],
+                    u[i][4],
                     u[i][5]
                 )
 
@@ -216,12 +218,12 @@ class App:
                 i = (pyxel.frame_count - self.fighting_time) // 10 % len(u)
                 pyxel.blt(
                     142,
-                    250 - 50 * self.on_fighting, 
-                    u[i][0], 
-                    u[i][1], 
-                    u[i][2], 
-                    u[i][3], 
-                    u[i][4], 
+                    250 - 50 * self.on_fighting,
+                    u[i][0],
+                    u[i][1],
+                    u[i][2],
+                    u[i][3],
+                    u[i][4],
                     u[i][5]
                 )
 
@@ -231,15 +233,16 @@ class App:
                 [0, 0, 16, 32, 40, 5],
                 [0, 32, 16, 32, 40, 5]
             ]
-            i = (pyxel.frame_count - self.thinking) // 20 % len(u)  # self.thinkingでいい感じ
+            # self.thinkingでいい感じ
+            i = (pyxel.frame_count - self.thinking) // 20 % len(u)
             pyxel.blt(
-                42 + self.fighter_now * 100 - slide, 
-                250, 
-                u[i][0], 
-                u[i][1], 
-                u[i][2], 
-                u[i][3], 
-                u[i][4], 
+                42 + self.fighter_now * 100 - slide,
+                250,
+                u[i][0],
+                u[i][1],
+                u[i][2],
+                u[i][3],
+                u[i][4],
                 u[i][5]
             )
 
@@ -251,23 +254,23 @@ class App:
 
         # Trueなら下の数字の階で戦っている
         self.is_fighting = False
-        self.on_fighting = -1 
+        self.on_fighting = -1
         self.fighting_time = 0
-        self.thinking = 0  # 自己満足です 
+        self.thinking = 0  # 自己満足です
 
-        # 
+        #
         self.load_path = [
             "../assets/fighter.pyxres",
             "../assets/enemy.pyxres"
         ]
 
-        # 
+        #
         self.problem_path = [
             "../assets/choimuzu.txt",
             "../assets/test_easy.txt"
         ]
 
-        # 
+        #
         self.enemy_num = 6
         self.equip_num = 3
 
@@ -279,7 +282,8 @@ class App:
             line = f.readline()
 
             # rstripはいらないかもだけど怖いから入れておきます
-            self.fighter_strength, self.tower_num = map(int, line.rstrip("\n").split())
+            self.fighter_strength, self.tower_num = map(
+                int, line.rstrip("\n").split())
             self.tower_info = []
             for _ in range(self.tower_num):
                 line = f.readline()

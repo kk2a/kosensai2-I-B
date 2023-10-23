@@ -62,7 +62,7 @@ class App:
                 else:
                     f = False
 
-            # 装備or薬
+            # 武器or薬
             elif t == 2:
                 # +
                 if b == 1:
@@ -116,6 +116,7 @@ class App:
     def draw_tower(self):
         slide = self.left_slide
 
+        # 敵のアニメーション
         u = (
             ((33, 33, 0, 0, 0, 24, 32, 15), (33, 33, 0, 32, 0, 24, 32, 15)),
             ((30, 19, 0, 0, 32, 24, 16, 15), (30, 19, 0, 32, 32, 24, 16, 15)),
@@ -126,6 +127,7 @@ class App:
             ((26, 25, 0, 56, 0, 32, 24, 15), (26, 25, 0, 88, 0, 32, 24, 15))
         )
 
+        # 武器の表示
         v = (
             (35, 24, 0, 0, 216, 16, 23, 5),
             (35, 24, 0, 24, 216, 16, 23, 5),
@@ -167,7 +169,7 @@ class App:
                         u[idx][k][7]
                     )
 
-        # 装備
+        # 武器
         pyxel.load(self.load_path[0])
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
@@ -195,21 +197,31 @@ class App:
     def draw_fighter(self):
         slide = self.left_slide
 
+        # 撃退アニメーション
         u = (
-            (0, 32, 16, 32, 40, 5),
-            (0, 32, 56, 32, 40, 5),
-            (0, 64, 56, 40, 40, 5)
+            (
+                (0, 40, 0, 32, 16, 32, 40, 5),
+                (6, 40, 0, 32, 56, 32, 40, 5),
+                (3, 40, 0, 64, 56, 40, 40, 5)
+            ),
+            (
+                (2, 40, 0, 32, 16, 32, 40, 5),
+                (-4, 40, 0, 28, 96, 35, 40, 5),
+                (2, 40, 0, 63, 96, 45, 40, 5)
+            )
         )
 
+        # 武器入手アニメーション
         v = (
-            (0, 32, 16, 32, 40, 5),
-            (0, 32, 56, 32, 40, 5),
-            (0, 64, 56, 40, 40, 5)
+            (2, 40, 0, 32, 16, 32, 40, 5),
+            (2, 40, 0, 32, 56, 32, 40, 5),
+            (2, 40, 0, 64, 56, 40, 40, 5)
         )
 
+        # 待機アニメーション
         w = (
-            (0, 0, 16, 32, 40, 5),
-            (0, 32, 16, 32, 40, 5)
+            (2, 40, 0, 0, 16, 32, 40, 5),
+            (2, 40, 0, 32, 16, 32, 40, 5)
         )
 
         pyxel.load(self.load_path[0])
@@ -217,30 +229,31 @@ class App:
         if self.is_fighting:
             # 倒すときのアニメーション
             if self.tower_info[self.fighter_now][self.on_fighting][0] == 1:
-                i = (pyxel.frame_count - self.fighting_time) // 10 % len(u)
+                j = 0
+                i = (pyxel.frame_count - self.fighting_time) // 10 % len(u[j])
                 pyxel.blt(
-                    142,
-                    250 - 50 * self.on_fighting,
-                    u[i][0],
-                    u[i][1],
-                    u[i][2],
-                    u[i][3],
-                    u[i][4],
-                    u[i][5]
+                    140 + u[j][i][0],
+                    290 - 50 * self.on_fighting - u[j][i][1],
+                    u[j][i][2],
+                    u[j][i][3],
+                    u[j][i][4],
+                    u[j][i][5],
+                    u[j][i][6],
+                    u[j][i][7]
                 )
 
-            # 装備などをとるときのアニメーション
+            # 武器などをとるときのアニメーション
             elif self.tower_info[self.fighter_now][self.on_fighting][0] == 2:
                 i = (pyxel.frame_count - self.fighting_time) // 10 % len(v)
                 pyxel.blt(
-                    142,
-                    250 - 50 * self.on_fighting,
-                    v[i][0],
-                    v[i][1],
+                    140 + v[i][0],
+                    290 - 50 * self.on_fighting - v[i][1],
                     v[i][2],
                     v[i][3],
                     v[i][4],
-                    v[i][5]
+                    v[i][5],
+                    v[i][6],
+                    v[i][7]
                 )
 
         # 元の位置にいる
@@ -248,14 +261,14 @@ class App:
             # self.thinkingでいい感じ
             i = (pyxel.frame_count - self.thinking) // 20 % len(w)
             pyxel.blt(
-                42 + self.fighter_now * 100 - slide,
-                250,
-                w[i][0],
-                w[i][1],
+                40 + self.fighter_now * 100 - slide + w[i][0],
+                290 - w[i][1],
                 w[i][2],
                 w[i][3],
                 w[i][4],
-                w[i][5]
+                w[i][5],
+                w[i][6],
+                w[i][7]
             )
 
     # メンバ変数のまとめ

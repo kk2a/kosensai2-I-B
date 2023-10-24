@@ -1,9 +1,21 @@
 import pyxel
 
+DISPALY_SIZE_W = 400
+DISPALY_SIZE_H = 300
+
+FLOOR_SIZE_W = 60
+FLOOR_SIZE_H = 50
+WALL_SIZE_BOTTOM = 0
+WALL_SIZE_SIDE = 0
+FLOOR_WALL_SIDE = 2 * WALL_SIZE_SIDE + FLOOR_SIZE_W
+
+TOWER_SKIP = 40
+TOWER_INIT_SKIP_H = 10
+
 
 class App:
     def __init__(self):
-        pyxel.init(400, 300, title="kuso game")
+        pyxel.init(DISPALY_SIZE_W, DISPALY_SIZE_H, title="kuso game")
         pyxel.mouse(True)
         self.info()
         pyxel.run(self.update, self.draw)
@@ -27,21 +39,25 @@ class App:
 
         # debug
         pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
-        floor_idx = (290 - pyxel.mouse_y) // 50
+        floor_idx = (DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
+                     pyxel.mouse_y) // (FLOOR_SIZE_H + WALL_SIZE_BOTTOM)
         pyxel.text(0, 0, f"{floor_idx}", 0)
         pyxel.text(10, 10, f"{self.fighter_strength}", 0)
         pyxel.text(10, 20, f"{self.passed}", 0)
 
     def update_slide(self):
+        S = TOWER_SKIP + FLOOR_WALL_SIDE
         # スライドしている最中
-        if self.left_slide != self.fighter_now * 100:
-            self.left_slide += 10
+        if self.left_slide != self.fighter_now * S:
+            self.left_slide += min(self.fighter_now * S - self.left_slide,
+                                   (self.fighter_now * S - self.left_slide + 14) // 15 + 3)
         # すべて倒したら次へ
         elif self.passed == len(self.tower_info[self.fighter_now]):
             self.passed = 0
             self.fighter_now += 1
 
     def update_fighter(self):
+        S = TOWER_SKIP + FLOOR_WALL_SIDE
         # 攻撃後に数字は変動
         if self.is_fighting and (pyxel.frame_count - self.fighting_time) >= 29:
             # input.pdfを参考にしてください
@@ -98,51 +114,63 @@ class App:
         # クリックされたとき
         elif (
             pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT) and
-            self.left_slide == self.fighter_now * 100 and
+            self.left_slide == self.fighter_now * S and
             not (self.is_fighting)
         ):
             if (
-                pyxel.mouse_x >= 140 and
-                pyxel.mouse_x <= 200
+                pyxel.mouse_x >= TOWER_SKIP + S and
+                pyxel.mouse_x <= 2 * S
             ):
-                floor_idx = (290 - pyxel.mouse_y) // 50
-                if (0 <= floor_idx and floor_idx < len(self.tower_info[self.fighter_now])):
-                    if self.tower_info[self.fighter_now][floor_idx][0] != 0:
+                idx = (DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
+                       pyxel.mouse_y) // (FLOOR_SIZE_H + WALL_SIZE_BOTTOM)
+                res = (DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
+                       pyxel.mouse_y) % (FLOOR_SIZE_H + WALL_SIZE_BOTTOM)
+                if (0 <= idx and
+                        idx < len(self.tower_info[self.fighter_now]) and
+                        WALL_SIZE_BOTTOM <= res
+                        ):
+                    if self.tower_info[self.fighter_now][idx][0] != 0:
                         self.is_fighting = True
-                        self.on_fighting = floor_idx
+                        self.on_fighting = idx
                         self.fighting_time = pyxel.frame_count
 
     # 最後はボスにするかもしれないので確定ではない
     def draw_tower(self):
         slide = self.left_slide
+        S = TOWER_SKIP + FLOOR_WALL_SIDE
+        Q = FLOOR_SIZE_H + WALL_SIZE_BOTTOM
 
         # 敵のアニメーション
         u = (
-            ((33, 33, 0, 0, 0, 24, 32, 15), (33, 33, 0, 32, 0, 24, 32, 15)),
-            ((30, 19, 0, 0, 32, 24, 16, 15), (30, 19, 0, 32, 32, 24, 16, 15)),
-            ((35, 14, 0, 0, 59, 12, 10, 15), (35, 14, 0, 16, 59, 12, 10, 15)),
-            ((28, 33, 0, 0, 72, 32, 32, 15), (28, 33, 0, 32, 72, 32, 32, 15)),
-            ((28, 33, 0, 0, 104, 24, 32, 15), (28, 33, 0, 32, 104, 24, 32, 15)),
-            ((28, 34, 0, 0, 143, 32, 33, 15), (28, 34, 0, 32, 143, 32, 33, 15)),
-            ((26, 25, 0, 56, 0, 32, 24, 15), (26, 25, 0, 88, 0, 32, 24, 15))
+            ((3, 1, 0, 0, 0, 24, 32, 15), (3, 1, 0, 32, 0, 24, 32, 15)),
+            ((6, 3, 0, 0, 32, 24, 16, 15), (6, 3, 0, 32, 32, 24, 16, 15)),
+            ((13, 4, 0, 0, 59, 12, 10, 15), (13, 4, 0, 16, 59, 12, 10, 15)),
+            ((1, 1, 0, 0, 72, 32, 32, 15), (1, 1, 0, 32, 72, 32, 32, 15)),
+            ((6, 1, 0, 0, 104, 24, 32, 15), (6, 1, 0, 32, 104, 24, 32, 15)),
+            ((1, 1, 0, 0, 143, 32, 33, 15), (1, 1, 0, 32, 143, 32, 33, 15)),
+            ((2, 1, 0, 56, 0, 32, 24, 15), (2, 1, 0, 88, 0, 32, 24, 15))
         )
 
         # 武器の表示
         v = (
-            (35, 24, 0, 0, 216, 16, 23, 5),
-            (35, 24, 0, 24, 216, 16, 23, 5),
-            (35, 24, 0, 48, 216, 16, 23, 5),
-            (35, 24, 0, 72, 216, 16, 23, 5),
-            (35, 33, 0, 96, 208, 16, 32, 5)
+            (9, 1, 0, 0, 216, 16, 24, 5),
+            (9, 1, 0, 24, 216, 16, 24, 5),
+            (9, 1, 0, 48, 216, 16, 24, 5),
+            (9, 1, 0, 72, 216, 16, 24, 5),
+            (9, 1, 0, 96, 208, 16, 33, 5)
         )
 
         # タワー
-        pyxel.rectb(40 - slide, 240, 60, 50, 0)
+        # てきとう
+        pyxel.rectb(TOWER_SKIP + WALL_SIZE_SIDE - slide, DISPALY_SIZE_H -
+                    TOWER_INIT_SKIP_H - Q, FLOOR_SIZE_W,
+                    FLOOR_SIZE_H, 1)
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
             for j in range(T):
-                pyxel.rectb(40 + 100 * (i + 1) - slide,
-                            240 - 50 * j, 60, 50, 0)
+                pyxel.rectb(TOWER_SKIP + WALL_SIZE_SIDE + S * (i + 1) - slide,
+                            DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * (j + 1),
+                            FLOOR_SIZE_W, FLOOR_SIZE_H, 0)
 
         # 敵
         pyxel.load(self.load_path[1])
@@ -152,15 +180,17 @@ class App:
                 t, b, m, idx = self.tower_info[i][j]
                 if t == 1:
                     pyxel.text(
-                        75 + 100 * (i + 1) - slide,
-                        242 - 50 * j,
+                        S * (i + 2) - 25 - WALL_SIZE_SIDE - slide,
+                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * (j + 1) + 2,
                         f"{self.text[b * 2 - 2]}{m}",
                         8
                     )
                     k = (pyxel.frame_count) // 25 % 2  # 一般には % len(u[idx])
                     pyxel.blt(
-                        40 + 100 * (i + 1) - slide + u[idx][k][0],
-                        290 - 50 * j - u[idx][k][1],
+                        S * (i + 2) - WALL_SIZE_SIDE -
+                        (u[idx][k][0] + u[idx][k][5]) - slide,
+                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - WALL_SIZE_BOTTOM -
+                        Q * j - (u[idx][k][1] + u[idx][k][6]),
                         u[idx][k][2],
                         u[idx][k][3],
                         u[idx][k][4],
@@ -177,14 +207,16 @@ class App:
                 t, b, m, idx = self.tower_info[i][j]
                 if t == 2:
                     pyxel.text(
-                        75 + 100 * (i + 1) - slide,
-                        242 - 50 * j,
+                        S * (i + 2) - 25 - slide,
+                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * (j + 1) + 2,
                         f"{self.text[b - 1]}{m}",
                         0
                     )
                     pyxel.blt(
-                        40 + 100 * (i + 1) - slide + v[idx][0],
-                        290 - 50 * j - v[idx][1],
+                        S * (i + 2) - WALL_SIZE_SIDE -
+                        (v[idx][0] + v[idx][5]) - slide,
+                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - WALL_SIZE_BOTTOM -
+                        Q * j - (v[idx][1] + v[idx][6]),
                         v[idx][2],
                         v[idx][3],
                         v[idx][4],
@@ -196,37 +228,39 @@ class App:
     # ファイター
     def draw_fighter(self):
         slide = self.left_slide
+        S = TOWER_SKIP + FLOOR_WALL_SIDE
+        Q = FLOOR_SIZE_H + WALL_SIZE_BOTTOM
 
         # 撃退アニメーション
         u = (
             (
-                (0, 40, 0, 32, 16, 32, 40, 5),
-                (6, 40, 0, 32, 56, 32, 40, 5),
-                (3, 40, 0, 64, 56, 40, 40, 5)
+                (0, 1, 0, 32, 16, 32, 40, 5),
+                (6, 1, 0, 32, 56, 32, 40, 5),
+                (3, 1, 0, 64, 56, 40, 40, 5)
             ),
             (
-                (2, 40, 0, 32, 16, 32, 40, 5),
-                (-4, 40, 0, 28, 96, 35, 40, 5),
-                (2, 40, 0, 63, 96, 45, 40, 5)
+                (2, 1, 0, 32, 16, 32, 40, 5),
+                (-4, 1, 0, 28, 96, 35, 40, 5),
+                (2, 1, 0, 63, 96, 45, 40, 5)
             ),
             (
-                (2, 40, 0, 32, 16, 32, 40, 5),
-                (-2, 40, 0, 32, 136, 32, 40, 5),
-                (3, 40, 0, 67, 136, 52, 40, 5)
+                (2, 1, 0, 32, 16, 32, 40, 5),
+                (-2, 1, 0, 32, 136, 32, 40, 5),
+                (3, 1, 0, 67, 136, 52, 40, 5)
             )
         )
 
         # 武器入手アニメーション
         v = (
-            (2, 40, 0, 32, 16, 32, 40, 5),
-            (2, 40, 0, 32, 56, 32, 40, 5),
-            (2, 40, 0, 64, 56, 40, 40, 5)
+            (2, 1, 0, 32, 16, 32, 40, 5),
+            (2, 1, 0, 32, 56, 32, 40, 5),
+            (2, 1, 0, 64, 56, 40, 40, 5)
         )
 
         # 待機アニメーション
         w = (
-            (2, 40, 0, 0, 16, 32, 40, 5),
-            (2, 40, 0, 32, 16, 32, 40, 5)
+            (2, 1, 0, 0, 16, 32, 40, 5),
+            (2, 1, 0, 32, 16, 32, 40, 5)
         )
 
         pyxel.load(self.load_path[0])
@@ -234,11 +268,12 @@ class App:
         if self.is_fighting:
             # 倒すときのアニメーション
             if self.tower_info[self.fighter_now][self.on_fighting][0] == 1:
-                j = 0
+                j = 1
                 i = (pyxel.frame_count - self.fighting_time) // 10 % len(u[j])
                 pyxel.blt(
-                    140 + u[j][i][0],
-                    290 - 50 * self.on_fighting - u[j][i][1],
+                    S + TOWER_SKIP + WALL_SIZE_BOTTOM + u[j][i][0],
+                    DISPALY_SIZE_H - TOWER_INIT_SKIP_H - WALL_SIZE_BOTTOM -
+                    Q * self.on_fighting - (u[j][i][1] + u[j][i][6]),
                     u[j][i][2],
                     u[j][i][3],
                     u[j][i][4],
@@ -251,8 +286,9 @@ class App:
             elif self.tower_info[self.fighter_now][self.on_fighting][0] == 2:
                 i = (pyxel.frame_count - self.fighting_time) // 10 % len(v)
                 pyxel.blt(
-                    140 + v[i][0],
-                    290 - 50 * self.on_fighting - v[i][1],
+                    S + TOWER_SKIP + WALL_SIZE_BOTTOM + v[i][0],
+                    DISPALY_SIZE_H - TOWER_INIT_SKIP_H - WALL_SIZE_BOTTOM -
+                    Q * self.on_fighting - (v[i][1] + v[i][6]),
                     v[i][2],
                     v[i][3],
                     v[i][4],
@@ -266,8 +302,8 @@ class App:
             # self.thinkingでいい感じ
             i = (pyxel.frame_count - self.thinking) // 20 % len(w)
             pyxel.blt(
-                40 + self.fighter_now * 100 - slide + w[i][0],
-                290 - w[i][1],
+                TOWER_SKIP + WALL_SIZE_SIDE + self.fighter_now * S - slide + w[i][0],
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - WALL_SIZE_BOTTOM - (w[i][1] + w[i][6]),
                 w[i][2],
                 w[i][3],
                 w[i][4],

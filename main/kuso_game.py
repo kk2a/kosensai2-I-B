@@ -291,7 +291,7 @@ class App:
         #
         self.load_path = (
             "../assets/fighter.pyxres",
-            "../assets/enemy_neo.pyxres"
+            "../assets/enemy.pyxres"
         )
 
         #

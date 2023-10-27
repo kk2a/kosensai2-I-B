@@ -186,10 +186,10 @@ class App:
                 t, b, m, idx = self.tower_info[i][j]
                 if t == 1:
                     k = (pyxel.frame_count) // 25 % 2  # 一般には % len(u[idx])
-                    tmp = (FLOOR_SIZE_W + u[idx][k][5]) // 2
+                    tmp = (FLOOR_SIZE_W + u[idx][k][5]) / 2
                     if (self.fighter_now == i and self.on_fighting == j):
                         tmp = u[idx][k][5] + u[idx][k][0]
-                    
+
                     pyxel.text(
                         S * (i + 2) - tmp - WALL_SIZE_SIDE - slide,
                         DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * (j + 1) + 2,
@@ -210,14 +210,16 @@ class App:
             for j in range(T):
                 t, b, m, idx = self.tower_info[i][j]
                 if t == 2:
-                    tmp = (FLOOR_SIZE_W + v[idx][5]) // 2
+                    tmp = (FLOOR_SIZE_W + v[idx][5]) / 2
                     if (self.fighter_now == i and self.on_fighting == j):
                         tmp = v[idx][0] + v[idx][5]
-                    pyxel.text(
-                        S * (i + 2) - tmp - slide,
-                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * (j + 1) + 2,
-                        f"{self.text[b - 1]}{m}", 0
+
+                    self.draw_number(
+                        S * (i + 2) - tmp + v[idx][5] / 2 - slide,
+                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * (j + 1),
+                        t, b, m
                     )
+
                     pyxel.blt(
                         S * (i + 2) - tmp - WALL_SIZE_SIDE - slide,
                         DISPALY_SIZE_H - TOWER_INIT_SKIP_H - WALL_SIZE_BOTTOM -
@@ -256,8 +258,8 @@ class App:
 
         # 待機アニメーション
         w = (
-            (2, 1, 0, 0, 16, 32, 40, 5),
-            (2, 1, 0, 32, 16, 32, 40, 5)
+            (9, 1, 0, 0, 16, 32, 40, 5),
+            (9, 1, 0, 32, 16, 32, 40, 5)
         )
 
         pyxel.load(self.load_path[0])
@@ -299,9 +301,51 @@ class App:
                 w[i][5], w[i][6], w[i][7]
             )
 
-    # def draw_number(self, x, y, op) {
+    def draw_number(self, x, y, t, b, m):
+        gf = (
+            (0.5, 0.5, 0, 80, 0, 7, 7, 5),
+            (0.5, 0.5, 0, 80, 8, 7, 7, 5),
+            (0.5, 0.5, 0, 88, 0, 7, 7, 5),
+            (0.5, 0.5, 0, 88, 8, 7, 7, 5)
+        )
 
-    # }
+        pow = 0
+        while 10 ** pow <= m:
+            pow += 1
+
+        if t == 2:
+            for i in range(pow + 1):
+                if i == 0:
+                    pyxel.blt(
+                        x - (pow + 1) * 4 + gf[b - 1][0], y + gf[b - 1][1] + 1, 
+                        gf[b - 1][2], gf[b - 1][3], gf[b - 1][4], 
+                        gf[b - 1][5], gf[b - 1][6], gf[b - 1][7]
+                    )
+                    continue
+
+                n = (m // (10 ** (pow - i)) + 9) % 10 
+                m %= (10 ** (pow - i))
+                pyxel.blt(
+                    x - (pow + 1) * 4 + 8 * i, y + 1, 0, 8 * n, 0, 8, 8, 5
+                )
+
+        # 色違い
+        elif t == 1:
+            for i in range(pow + 1):
+                if i == 0:
+                    pyxel.blt(
+                        x - (pow + 1) * 4 + gf[b - 1][0], y + gf[b - 1][1] + 1, 
+                        gf[b - 1][2], gf[b - 1][3], gf[b - 1][4], 
+                        gf[b - 1][5], gf[b - 1][6], gf[b - 1][7]
+                    )
+                    continue
+
+                n = (m // (10 ** (pow - i)) + 9) % 10 
+                m %= (10 ** (pow - i))
+                pyxel.blt(
+                    x - (pow + 1) * 4 + 8 * i, y + 1, 0, 8 * n, 0, 8, 8, 5
+                )
+
 
     # メンバ変数のまとめ
     def info(self):

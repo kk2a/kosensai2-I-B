@@ -64,7 +64,7 @@ class App:
 
     def update_fighter(self, S):
         # 攻撃後に数字は変動
-        if self.is_fighting and (pyxel.frame_count - self.fighting_time) >= 29:
+        if self.is_fighting and (pyxel.frame_count - self.fighting_time) >= 30:
             # input.pdfを参考にしてください
             t, b, m, _ = self.tower_info[self.fighter_now][self.on_fighting]
             f = True
@@ -105,9 +105,11 @@ class App:
                 else:
                     f = False
 
+            # bad
             else:
                 f = False
 
+            # 戻る
             self.is_fighting = False
             self.thinking = pyxel.frame_count
 
@@ -116,6 +118,7 @@ class App:
                 self.on_fighting = -1
                 return
 
+            # 成功
             self.tower_info[self.fighter_now][self.on_fighting] = 0, 0, 0, 0
             self.on_fighting = -1
             self.passed += 1
@@ -172,13 +175,13 @@ class App:
             (0, Q, 0, 140, 98, 92, 58, 5)
         )
 
-        # タワー
+        # タワーは最初
         pyxel.load(self.load_path[0])
         idx = 0
         # 最初のタワー
         pyxel.blt(
             TOWER_SKIP - slide, DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
-            + w[idx][1], w[idx][2], w[idx][3], w[idx][4], 
+            + w[idx][1], w[idx][2], w[idx][3], w[idx][4],
             w[idx][5], w[idx][6], w[idx][7]
         )
         for i in range(self.tower_num):
@@ -190,9 +193,9 @@ class App:
                     idx = 0
 
                 pyxel.blt(
-                    TOWER_SKIP + S * (i + 1) - slide, 
+                    TOWER_SKIP + S * (i + 1) - slide,
                     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * j -
-                    + w[idx][1], w[idx][2], w[idx][3], w[idx][4], 
+                    + w[idx][1], w[idx][2], w[idx][3], w[idx][4],
                     w[idx][5], w[idx][6], w[idx][7]
                 )
 
@@ -232,11 +235,16 @@ class App:
                     if (self.fighter_now == i and self.on_fighting == j):
                         tmp = u[idx][k][5] + u[idx][k][0] + WALL_SIZE_SIDE
 
-                    pyxel.text(
-                        S * (i + 2) - tmp - slide,
-                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * (j + 1) + 2,
-                        f"{self.text[b * 2 - 2]}{m}", 8
+                    self.draw_number(
+                        S * (i + 2) - tmp + u[idx][k][5] / 2 - slide,
+                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * (j + 1),
+                        t, b, m
                     )
+                    # pyxel.text(
+                    #     S * (i + 2) - tmp - slide,
+                    #     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * (j + 1) + 2,
+                    #     f"{self.text[b * 2 - 2]}{m}", 8
+                    # )
                     pyxel.blt(
                         S * (i + 2) - tmp - slide,
                         DISPALY_SIZE_H - TOWER_INIT_SKIP_H - WALL_SIZE_BOTTOM -
@@ -320,7 +328,7 @@ class App:
             i = (pyxel.frame_count - self.thinking) // 20 % len(w)
 
             self.draw_number(
-                TOWER_SKIP + FLOOR_WALL_SIDE / 2  + self.fighter_now * S -
+                TOWER_SKIP + FLOOR_WALL_SIDE / 2 + self.fighter_now * S -
                 slide, DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q,
                 2, -1, self.fighter_strength
             )
@@ -351,7 +359,7 @@ class App:
         if b == -1:
             for i in range(pow):
                 n = (m // (10 ** (pow - 1 - i)) + 9) % 10
-                m %= (10 ** (pow  - 1 - i))
+                m %= (10 ** (pow - 1 - i))
                 pyxel.blt(
                     x - pow * 4 + 8 * i, y + 1, 0, 8 * n, 0, 8, 8, 5
                 )
@@ -362,7 +370,7 @@ class App:
                 if i == 0:
                     pyxel.blt(
                         x - (pow + 1) * 4 + gf[b - 1][0], y + gf[b - 1][1] + 1,
-                        gf[b - 1][2], gf[b - 1][3], gf[b - 1][4],
+                        0, gf[b - 1][3], gf[b - 1][4],
                         gf[b - 1][5], gf[b - 1][6], gf[b - 1][7]
                     )
                     continue
@@ -379,7 +387,7 @@ class App:
                 if i == 0:
                     pyxel.blt(
                         x - (pow + 1) * 4 + gf[b - 1][0], y + gf[b - 1][1] + 1,
-                        gf[b - 1][2], gf[b - 1][3], gf[b - 1][4],
+                        1, gf[b - 1][3], gf[b - 1][4],
                         gf[b - 1][5], gf[b - 1][6], gf[b - 1][7]
                     )
                     continue
@@ -387,7 +395,7 @@ class App:
                 n = (m // (10 ** (pow - i)) + 9) % 10
                 m %= (10 ** (pow - i))
                 pyxel.blt(
-                    x - (pow + 1) * 4 + 8 * i, y + 1, 0, 8 * n, 0, 8, 8, 5
+                    x - (pow + 1) * 4 + 8 * i, y + 1, 1, 8 * n, 0, 8, 8, 5
                 )
 
     # メンバ変数のまとめ

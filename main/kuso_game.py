@@ -282,6 +282,13 @@ class App:
             if self.tower_info[self.fighter_now][self.on_fighting][0] == 1:
                 j = 1
                 i = (pyxel.frame_count - self.fighting_time) // 10 % len(u[j])
+
+                self.draw_number(
+                    S + TOWER_SKIP + WALL_SIZE_SIDE + u[j][i][0] +
+                    u[j][i][5] / 2, DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
+                    Q * (self.on_fighting + 1), 2, -1, self.fighter_strength
+                )
+
                 pyxel.blt(
                     S + TOWER_SKIP + WALL_SIZE_SIDE + u[j][i][0],
                     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - WALL_SIZE_BOTTOM -
@@ -293,6 +300,13 @@ class App:
             # 武器などをとるときのアニメーション
             elif self.tower_info[self.fighter_now][self.on_fighting][0] == 2:
                 i = (pyxel.frame_count - self.fighting_time) // 10 % len(v)
+
+                self.draw_number(
+                    S + TOWER_SKIP + WALL_SIZE_SIDE + v[i][0] +
+                    v[i][5] / 2, DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
+                    Q * (self.on_fighting + 1), 2, -1, self.fighter_strength
+                )
+
                 pyxel.blt(
                     S + TOWER_SKIP + WALL_SIZE_SIDE + v[i][0],
                     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - WALL_SIZE_BOTTOM -
@@ -305,6 +319,13 @@ class App:
         else:
             # self.thinkingでいい感じ
             i = (pyxel.frame_count - self.thinking) // 20 % len(w)
+
+            self.draw_number(
+                TOWER_SKIP + FLOOR_WALL_SIDE / 2  + self.fighter_now * S -
+                slide, DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q,
+                2, -1, self.fighter_strength
+            )
+
             pyxel.blt(
                 TOWER_SKIP + FLOOR_WALL_SIDE / 2 +
                 self.fighter_now * S - slide - w[i][0],
@@ -325,6 +346,15 @@ class App:
         pow = 0
         while 10 ** pow <= m:
             pow += 1
+
+        if b == -1:
+            for i in range(pow):
+                n = (m // (10 ** (pow - 1 - i)) + 9) % 10
+                m %= (10 ** (pow  - 1 - i))
+                pyxel.blt(
+                    x - pow * 4 + 8 * i, y + 1, 0, 8 * n, 0, 8, 8, 5
+                )
+            return
 
         if t == 2:
             for i in range(pow + 1):

@@ -231,7 +231,7 @@ class App:
                     k = (pyxel.frame_count) // 25 % 2  # 一般には % len(u[idx])
                     tmp = (FLOOR_WALL_SIDE + u[idx][k][5]) / 2
                     if (self.fighter_now == i and self.on_fighting == j):
-                        tmp = u[idx][k][5] + u[idx][k][0] + FLOOR_WALL_SIDE
+                        tmp = u[idx][k][5] + u[idx][k][0] + WALL_SIZE_SIDE
 
                     pyxel.text(
                         S * (i + 2) - tmp - slide,

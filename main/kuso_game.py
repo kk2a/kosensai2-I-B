@@ -174,11 +174,8 @@ class App:
 
         # タワー
         pyxel.load(self.load_path[0])
-        pyxel.blt(
-            TOWER_SKIP - slide, DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
-            CEIL_HEIGHT, 0, 140, 8, 92, 90, 5
-        )
         idx = 0
+        # 最初のタワー
         pyxel.blt(
             TOWER_SKIP - slide, DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
             + w[idx][1], w[idx][2], w[idx][3], w[idx][4], 
@@ -187,9 +184,11 @@ class App:
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
             for j in range(T):
+                # 最上階だけ特別
                 idx = 1
                 if j == T - 1:
                     idx = 0
+
                 pyxel.blt(
                     TOWER_SKIP + S * (i + 1) - slide, 
                     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * j -
@@ -264,9 +263,9 @@ class App:
 
         # 武器入手アニメーション
         v = (
+            (2, 1, 0, 0, 16, 32, 40, 5),
             (2, 1, 0, 32, 16, 32, 40, 5),
-            (2, 1, 0, 32, 56, 32, 40, 5),
-            (2, 1, 0, 64, 56, 40, 40, 5)
+            (6, 2, 0, 5, 142, 27, 66, 5)
         )
 
         # 待機アニメーション
@@ -335,6 +334,8 @@ class App:
                 w[i][5], w[i][6], w[i][7]
             )
 
+    # 数字を表示
+    # センタリングしたいので、xは真ん中を渡す
     def draw_number(self, x, y, t, b, m):
         gf = (
             (0.5, 0.5, 0, 80, 0, 7, 7, 5),

@@ -178,12 +178,12 @@ class App:
             TOWER_SKIP - slide, DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
             CEIL_HEIGHT, 0, 140, 8, 92, 90, 5
         )
-        # pyxel.blt(
-        #     TOWER_SKIP - slide, 
-        #     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - TOWER_INIT_SKIP_H
-        #     + w[idx][1], w[idx][2], w[idx][3], w[idx][4], 
-        #     w[idx][5], w[idx][6], w[idx][7]
-        # )
+        idx = 0
+        pyxel.blt(
+            TOWER_SKIP - slide, DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
+            + w[idx][1], w[idx][2], w[idx][3], w[idx][4], 
+            w[idx][5], w[idx][6], w[idx][7]
+        )
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
             for j in range(T):

@@ -57,9 +57,24 @@ class App:
         self.draw_tower(self.left_slide,
                         TOWER_SKIP + FLOOR_WALL_SIDE,
                         FLOOR_WALL_BOTTOM)
-        self.draw_fighter(self.left_slide,
-                          TOWER_SKIP + FLOOR_WALL_SIDE,
-                          FLOOR_WALL_BOTTOM)
+        self.draw_equip(self.left_slide,
+                        TOWER_SKIP + FLOOR_WALL_SIDE,
+                        FLOOR_WALL_BOTTOM)
+        if self.is_fighting:
+            self.draw_enemy(self.left_slide,
+                            TOWER_SKIP + FLOOR_WALL_SIDE,
+                            FLOOR_WALL_BOTTOM)
+            pyxel.load(self.load_path[0])
+            self.draw_fighter(self.left_slide,
+                              TOWER_SKIP + FLOOR_WALL_SIDE,
+                              FLOOR_WALL_BOTTOM)
+        else:
+            self.draw_fighter(self.left_slide,
+                              TOWER_SKIP + FLOOR_WALL_SIDE,
+                              FLOOR_WALL_BOTTOM)
+            self.draw_enemy(self.left_slide,
+                            TOWER_SKIP + FLOOR_WALL_SIDE,
+                            FLOOR_WALL_BOTTOM)
 
         # debug
         pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
@@ -166,26 +181,6 @@ class App:
 
     # 最後はボスにするかもしれないので確定ではない
     def draw_tower(self, slide, S, Q):
-        # 敵のアニメーション
-        u = (
-            ((3, 1, 0, 0, 0, 24, 32, 15), (3, 1, 0, 32, 0, 24, 32, 15)),
-            ((6, 3, 0, 0, 32, 24, 16, 15), (6, 3, 0, 32, 32, 24, 16, 15)),
-            ((11, 4, 0, 0, 59, 12, 10, 15), (11, 4, 0, 16, 59, 12, 10, 15)),
-            ((3, 1, 0, 3, 73, 26, 30, 15), (3, 1, 0, 35, 73, 26, 30, 15)),
-            ((6, 1, 0, 0, 104, 24, 32, 15), (6, 1, 0, 32, 104, 24, 32, 15)),
-            ((3, 1, 0, 0, 143, 26, 33, 15), (3, 1, 0, 32, 143, 26, 33, 15)),
-            ((2, 1, 0, 56, 0, 32, 24, 15), (2, 1, 0, 88, 0, 32, 24, 15))
-        )
-
-        # 武器の表示
-        v = (
-            (9, 1, 0, 0, 216, 16, 24, 5),
-            (9, 1, 0, 24, 216, 16, 24, 5),
-            (9, 1, 0, 48, 216, 16, 24, 5),
-            (9, 1, 0, 96, 208, 16, 33, 5),
-            (9, 1, 0, 112, 208, 16, 33, 5)
-        )
-
         # タワーの表示
         w = (
             (0, CEIL_HEIGHT, 0, 140, 8, 92, 90, 5),
@@ -216,7 +211,17 @@ class App:
                     w[idx][5], w[idx][6], w[idx][7]
                 )
 
-        # 武器
+    # 武器
+    def draw_equip(self, slide, S, Q):
+        # 武器の表示
+        v = (
+            (9, 1, 0, 0, 216, 16, 24, 5),
+            (9, 1, 0, 24, 216, 16, 24, 5),
+            (9, 1, 0, 48, 216, 16, 24, 5),
+            (9, 1, 0, 96, 208, 16, 33, 5),
+            (9, 1, 0, 112, 208, 16, 33, 5)
+        )
+
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
             for j in range(T):
@@ -240,7 +245,19 @@ class App:
                         v[idx][5], v[idx][6], v[idx][7]
                     )
 
-        # 敵
+    # 敵
+    def draw_enemy(self, slide, S, Q):
+        # 敵のアニメーション
+        u = (
+            ((3, 1, 0, 0, 0, 24, 32, 15), (3, 1, 0, 32, 0, 24, 32, 15)),
+            ((6, 3, 0, 0, 32, 24, 16, 15), (6, 3, 0, 32, 32, 24, 16, 15)),
+            ((11, 4, 0, 0, 59, 12, 10, 15), (11, 4, 0, 16, 59, 12, 10, 15)),
+            ((3, 1, 0, 3, 73, 26, 30, 15), (3, 1, 0, 35, 73, 26, 30, 15)),
+            ((6, 1, 0, 0, 104, 24, 32, 15), (6, 1, 0, 32, 104, 24, 32, 15)),
+            ((3, 1, 0, 0, 143, 26, 33, 15), (3, 1, 0, 32, 143, 26, 33, 15)),
+            ((2, 1, 0, 56, 0, 32, 24, 15), (2, 1, 0, 88, 0, 32, 24, 15))
+        )
+
         pyxel.load(self.load_path[1])
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
@@ -265,6 +282,7 @@ class App:
                         u[idx][k][2], u[idx][k][3], u[idx][k][4],
                         u[idx][k][5], u[idx][k][6], u[idx][k][7]
                     )
+
 
     # ファイター
     def draw_fighter(self, slide, S, Q):
@@ -295,7 +313,6 @@ class App:
             (18, 1, 0, 32, 16, 32, 40, 5)
         )
 
-        pyxel.load(self.load_path[0])
         # 戦っているときのアニメーション
         if self.is_fighting:
             # 倒すときのアニメーション

@@ -14,6 +14,8 @@ CEIL_HEIGHT = 90
 TOWER_SKIP = 40
 TOWER_INIT_SKIP_H = 10
 
+PROBLEM_NUMBER = 0
+
 
 class App:
     def __init__(self):
@@ -28,6 +30,21 @@ class App:
 
         # おめでとう的なのをしたい
         if self.fighter_now >= self.tower_num:
+            pyxel.cls(0)
+            pyxel.text(
+                DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2,
+                "omedetou!", 1
+            )
+            pyxel.text(
+                DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2 + 5,
+                f"your strength is {self.fighter_strength}", 1
+            )
+            pyxel.text(
+                DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2 + 10,
+                f"max strength is 4222",
+                1
+            )
+            pyxel.show()
             pyxel.quit()
 
         # slideを後にすることで1フレームだけ戻るということがなくなる!!!
@@ -114,7 +131,7 @@ class App:
             self.thinking = pyxel.frame_count
 
             # ここでゲームオーバーだと思う
-            if not(f):
+            if not f:
                 self.on_fighting = -1
                 return
 
@@ -181,7 +198,7 @@ class App:
         # 最初のタワー
         pyxel.blt(
             TOWER_SKIP - slide, DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
-            + w[idx][1], w[idx][2], w[idx][3], w[idx][4],
+            w[idx][1], w[idx][2], w[idx][3], w[idx][4],
             w[idx][5], w[idx][6], w[idx][7]
         )
         for i in range(self.tower_num):
@@ -240,11 +257,7 @@ class App:
                         DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * (j + 1),
                         t, b, m
                     )
-                    # pyxel.text(
-                    #     S * (i + 2) - tmp - slide,
-                    #     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * (j + 1) + 2,
-                    #     f"{self.text[b * 2 - 2]}{m}", 8
-                    # )
+
                     pyxel.blt(
                         S * (i + 2) - tmp - slide,
                         DISPALY_SIZE_H - TOWER_INIT_SKIP_H - WALL_SIZE_BOTTOM -
@@ -426,11 +439,8 @@ class App:
         self.enemy_num = 7
         self.equip_num = 5
 
-        # 演算表示
-        self.text = ["+", "-", "x", "/"]
-
         # テキストから問題を読み込む
-        with open(self.problem_path[0]) as f:
+        with open(self.problem_path[PROBLEM_NUMBER]) as f:
             line = f.readline()
 
             # rstripはいらないかもだけど怖いから入れておきます

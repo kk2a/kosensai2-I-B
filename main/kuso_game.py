@@ -14,6 +14,7 @@ CEIL_HEIGHT = 90
 TOWER_SKIP = 40
 TOWER_INIT_SKIP_H = 10
 
+DIFFICULTY = "normal"
 PROBLEM_NUMBER = 0
 
 
@@ -33,16 +34,15 @@ class App:
             pyxel.cls(0)
             pyxel.text(
                 DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2,
-                "omedetou!", 1
+                "Congraturation!", 1
             )
             pyxel.text(
                 DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2 + 5,
-                f"your strength is {self.fighter_strength}", 1
+                f"your strength is {self.fighter_strength}!!", 1
             )
             pyxel.text(
                 DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2 + 10,
-                f"max strength is 4222",
-                1
+                f"max strength is {self.max_strength}!!", 1
             )
             pyxel.show()
             pyxel.quit()
@@ -447,17 +447,11 @@ class App:
         )
 
         #
-        self.problem_path = (
-            "../assets/choimuzu.txt",
-            "../assets/test_easy.txt"
-        )
-
-        #
         self.enemy_num = 7
         self.equip_num = 5
 
         # テキストから問題を読み込む
-        with open(self.problem_path[PROBLEM_NUMBER]) as f:
+        with open(f"../problem/{DIFFICULTY}/{PROBLEM_NUMBER}.txt") as f:
             line = f.readline()
 
             # rstripはいらないかもだけど怖いから入れておきます
@@ -479,6 +473,7 @@ class App:
                         b.append(pyxel.rndi(0, self.equip_num - 1))
                     a.append(b)
                 self.tower_info.append(a)
+            self.max_strength = int(f.readline().rstrip())
 
 
 App()

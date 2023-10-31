@@ -396,36 +396,34 @@ class App:
             return
 
         if t == 2:
+            tmp = 0
             for i in range(pow + 1):
                 if i == 0:
+                    tmpx = gf[b - 1][3]
+                    tmpy = gf[b - 1][4]
+                    if b in [2, 4]:
+                        tmpx -= 80 
+                        tmpy += 8
+                        tmp = 1
                     pyxel.blt(
                         x - (pow + 1) * 4 + gf[b - 1][0], y + gf[b - 1][1] + 1,
-                        0, gf[b - 1][3], gf[b - 1][4],
-                        gf[b - 1][5], gf[b - 1][6], gf[b - 1][7]
+                        tmp, tmpx, tmpy, gf[b - 1][5], gf[b - 1][6], gf[b - 1][7]
                     )
                     continue
 
                 n = (m // (10 ** (pow - i)) + 9) % 10
                 m %= (10 ** (pow - i))
                 pyxel.blt(
-                    x - (pow + 1) * 4 + 8 * i, y + 1, 0, 8 * n, 0, 8, 8, 5
+                    x - (pow + 1) * 4 + 8 * i, y + 1, tmp, 8 * n, 0, 8, 8, 5
                 )
 
         # 色違い
         elif t == 1:
-            for i in range(pow + 1):
-                if i == 0:
-                    pyxel.blt(
-                        x - (pow + 1) * 4 + gf[b - 1][0], y + gf[b - 1][1] + 1,
-                        1, gf[b - 1][3], gf[b - 1][4],
-                        gf[b - 1][5], gf[b - 1][6], gf[b - 1][7]
-                    )
-                    continue
-
-                n = (m // (10 ** (pow - i)) + 9) % 10
-                m %= (10 ** (pow - i))
+            for i in range(pow):
+                n = (m // (10 ** (pow - 1 - i)) + 9) % 10
+                m %= (10 ** (pow - 1 - i))
                 pyxel.blt(
-                    x - (pow + 1) * 4 + 8 * i, y + 1, 1, 8 * n, 0, 8, 8, 5
+                    x - pow * 4 + 8 * i, y + 1, 1, 8 * n, 0, 8, 8, 5
                 )
 
     # メンバ変数のまとめ

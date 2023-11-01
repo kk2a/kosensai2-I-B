@@ -18,11 +18,24 @@ DIFFICULTY = "caratheodory"
 PROBLEM_NUMBER = 0
 
 
+def load_bgm(msc, filename, snd1, snd2, snd3):
+    import json
+
+    with open(filename, "rt") as file:
+        bgm = json.loads(file.read())
+        pyxel.sound(snd1).set(*bgm[0])
+        pyxel.sound(snd2).set(*bgm[1])
+        pyxel.sound(snd3).set(*bgm[2])
+        pyxel.music(msc).set([snd1], [snd2], [snd3], [])
+
+
 class App:
     def __init__(self):
         pyxel.init(DISPALY_SIZE_W, DISPALY_SIZE_H, title="kuso game")
         pyxel.mouse(True)
         self.info()
+        load_bgm(0, "../assets/bgm.json", 2, 3, 4)
+        pyxel.playm(0, loop=True)
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -64,7 +77,7 @@ class App:
             self.draw_enemy(self.left_slide,
                             TOWER_SKIP + FLOOR_WALL_SIDE,
                             FLOOR_WALL_BOTTOM)
-            pyxel.load(self.load_path[0])
+            pyxel.load(self.load_path[0], image=True)
             self.draw_fighter(self.left_slide,
                               TOWER_SKIP + FLOOR_WALL_SIDE,
                               FLOOR_WALL_BOTTOM)
@@ -188,12 +201,12 @@ class App:
         )
 
         # タワーは最初
-        pyxel.load(self.load_path[0])
+        pyxel.load(self.load_path[0], image=True)
         idx = 0
         # 最初のタワー
         pyxel.blt(
-            TOWER_SKIP - slide - w[idx][0], DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
-            w[idx][1], w[idx][2], w[idx][3], w[idx][4],
+            TOWER_SKIP - slide - w[idx][0], DISPALY_SIZE_H -
+            TOWER_INIT_SKIP_H - w[idx][1], w[idx][2], w[idx][3], w[idx][4],
             w[idx][5], w[idx][6], w[idx][7]
         )
         pyxel.line(
@@ -203,7 +216,7 @@ class App:
             DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
             0
         )
-        for i in range(self.tower_num):
+        for i in range(self.tower_num - 1):
             T = len(self.tower_info[i])
             for j in range(T):
                 # 最上階だけ特別
@@ -226,7 +239,11 @@ class App:
                         DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
                         0
                     )
-
+        pyxel.blt(
+            TOWER_SKIP + S * self.tower_num - slide,
+            DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 144,
+            1, 88, 112, 164, 144, 5
+        )
 
     # 武器
     def draw_equip(self, slide, S, Q):
@@ -275,7 +292,7 @@ class App:
             ((2, 1, 0, 56, 0, 32, 24, 15), (2, 1, 0, 88, 0, 32, 24, 15))
         )
 
-        pyxel.load(self.load_path[1])
+        pyxel.load(self.load_path[1], image=True)
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
             for j in range(T):
@@ -299,7 +316,6 @@ class App:
                         u[idx][k][2], u[idx][k][3], u[idx][k][4],
                         u[idx][k][5], u[idx][k][6], u[idx][k][7]
                     )
-
 
     # ファイター
     def draw_fighter(self, slide, S, Q):
@@ -419,12 +435,13 @@ class App:
                     tmpx = gf[b - 1][3]
                     tmpy = gf[b - 1][4]
                     if b in [2, 4]:
-                        tmpx -= 80 
+                        tmpx -= 80
                         tmpy += 8
                         tmp = 1
                     pyxel.blt(
                         x - (pow + 1) * 4 + gf[b - 1][0], y + gf[b - 1][1] + 1,
-                        tmp, tmpx, tmpy, gf[b - 1][5], gf[b - 1][6], gf[b - 1][7]
+                        tmp, tmpx, tmpy, gf[b - 1][5],
+                        gf[b - 1][6], gf[b - 1][7]
                     )
                     continue
 

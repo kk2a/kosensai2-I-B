@@ -17,6 +17,11 @@ TOWER_INIT_SKIP_H = 10
 DIFFICULTY = "caratheodory"
 PROBLEM_NUMBER = 0
 
+LOAD_PATH = (
+    "../assets/fighter.pyxres",
+    "../assets/enemy.pyxres"
+)
+
 
 def load_bgm(msc, filename, snd1, snd2, snd3):
     import json
@@ -34,8 +39,9 @@ class App:
         pyxel.init(DISPALY_SIZE_W, DISPALY_SIZE_H, title="kuso game")
         pyxel.mouse(True)
         self.info()
-        load_bgm(0, "../assets/bgm.json", 2, 3, 4)
+        load_bgm(0, "../assets/bgm.json", 4, 5, 6)
         pyxel.playm(0, loop=True)
+        
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -77,7 +83,7 @@ class App:
             self.draw_enemy(self.left_slide,
                             TOWER_SKIP + FLOOR_WALL_SIDE,
                             FLOOR_WALL_BOTTOM)
-            pyxel.load(self.load_path[0], image=True)
+            pyxel.load(LOAD_PATH[0], image=True)
             self.draw_fighter(self.left_slide,
                               TOWER_SKIP + FLOOR_WALL_SIDE,
                               FLOOR_WALL_BOTTOM)
@@ -168,6 +174,11 @@ class App:
             self.on_fighting = -1
             self.passed += 1
 
+        elif self.is_fighting and (pyxel.frame_count - self.fighting_time) == 22:
+            t, _, _, _ = self.tower_info[self.fighter_now][self.on_fighting]
+            pyxel.load(LOAD_PATH[0], sound=True)
+            pyxel.play(3, t - 1)
+
         # クリックされたとき
         elif (
             pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT) and
@@ -201,7 +212,7 @@ class App:
         )
 
         # タワーは最初
-        pyxel.load(self.load_path[0], image=True)
+        pyxel.load(LOAD_PATH[0], image=True)
         idx = 0
         # 最初のタワー
         pyxel.blt(
@@ -292,7 +303,7 @@ class App:
             ((2, 1, 0, 56, 0, 32, 24, 15), (2, 1, 0, 88, 0, 32, 24, 15))
         )
 
-        pyxel.load(self.load_path[1], image=True)
+        pyxel.load(LOAD_PATH[1], image=True)
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
             for j in range(T):
@@ -473,10 +484,7 @@ class App:
         self.thinking = 0  # 自己満足です
 
         #
-        self.load_path = (
-            "../assets/fighter.pyxres",
-            "../assets/enemy.pyxres"
-        )
+        
 
         #
         self.enemy_num = 7

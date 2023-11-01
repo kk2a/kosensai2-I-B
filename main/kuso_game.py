@@ -207,7 +207,7 @@ class App:
                 pyxel.blt(
                     TOWER_SKIP + S * (i + 1) - slide,
                     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * j -
-                    + w[idx][1], w[idx][2], w[idx][3], w[idx][4],
+                    w[idx][1], w[idx][2], w[idx][3], w[idx][4],
                     w[idx][5], w[idx][6], w[idx][7]
                 )
 

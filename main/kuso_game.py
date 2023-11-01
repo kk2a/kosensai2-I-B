@@ -9,7 +9,7 @@ WALL_SIZE_BOTTOM = 8
 WALL_SIZE_SIDE = 16
 FLOOR_WALL_SIDE = 2 * WALL_SIZE_SIDE + FLOOR_SIZE_W
 FLOOR_WALL_BOTTOM = WALL_SIZE_BOTTOM + FLOOR_SIZE_H
-CEIL_HEIGHT = 90
+CEIL_HEIGHT = 98
 
 TOWER_SKIP = 40
 TOWER_INIT_SKIP_H = 10
@@ -183,7 +183,7 @@ class App:
     def draw_tower(self, slide, S, Q):
         # タワーの表示
         w = (
-            (0, CEIL_HEIGHT, 0, 140, 8, 92, 90, 5),
+            (4, CEIL_HEIGHT, 0, 136, 0, 100, CEIL_HEIGHT, 5),
             (0, Q, 0, 140, 98, 92, 58, 5)
         )
 
@@ -192,9 +192,16 @@ class App:
         idx = 0
         # 最初のタワー
         pyxel.blt(
-            TOWER_SKIP - slide, DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
+            TOWER_SKIP - slide - w[idx][0], DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
             w[idx][1], w[idx][2], w[idx][3], w[idx][4],
             w[idx][5], w[idx][6], w[idx][7]
+        )
+        pyxel.line(
+            TOWER_SKIP - slide,
+            DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
+            TOWER_SKIP - slide + FLOOR_WALL_SIDE - 1,
+            DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
+            0
         )
         for i in range(self.tower_num):
             T = len(self.tower_info[i])
@@ -205,11 +212,21 @@ class App:
                     idx = 0
 
                 pyxel.blt(
-                    TOWER_SKIP + S * (i + 1) - slide,
+                    TOWER_SKIP + S * (i + 1) - slide - w[idx][0],
                     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * j -
                     w[idx][1], w[idx][2], w[idx][3], w[idx][4],
                     w[idx][5], w[idx][6], w[idx][7]
                 )
+
+                if (j == T - 1):
+                    pyxel.line(
+                        TOWER_SKIP + S * (i + 1) - slide,
+                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
+                        TOWER_SKIP + S * (i + 1) - slide + FLOOR_WALL_SIDE - 1,
+                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
+                        0
+                    )
+
 
     # 武器
     def draw_equip(self, slide, S, Q):

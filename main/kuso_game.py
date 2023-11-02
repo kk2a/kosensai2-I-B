@@ -339,7 +339,7 @@ class App:
             ((10, 1, 0, 191, 101, 53, 58, 15), (10, 1, 1, 201, 164, 45, 60, 15),
              (10, 1, 0, 191, 168, 57, 53, 15)),
             ((10, 1, 0, 191, 101, 53, 58, 15), (10, 1, 1, 201, 164, 45, 60, 15),
-             (10, 1, 2, 184, 169, 62, 55, 15))
+             (10, 1, 2, 184, 169, 62, 55, 15)),
         )
 
         pyxel.load(LOAD_PATH[1], image=True)
@@ -420,9 +420,9 @@ class App:
         # 撃退アニメーション
         u = (
             (
-                (0, 1, 0, 32, 16, 32, 40, 5),
-                (6, 1, 0, 32, 56, 32, 40, 5),
-                (3, 1, 0, 64, 56, 40, 40, 5)
+                (-20, 1, 0, 32, 16, 32, 40, 5),
+                (-13, 1, 0, 32, 56, 32, 40, 5),
+                (10, 1, 0, 64, 56, 40, 40, 5)
             ),
             (
                 (2, 1, 0, 32, 16, 32, 40, 5),
@@ -430,9 +430,9 @@ class App:
                 (2, 1, 0, 63, 96, 45, 40, 5)
             ),
             (
-                (2, 1, 0, 32, 16, 32, 40, 5),
-                (-4, 1, 0, 28, 96, 35, 40, 5),
-                (2, 1, 0, 63, 96, 45, 40, 5)
+                (-15, 1, 0, 32, 16, 32, 40, 5),
+                (-19, 1, 0, 28, 96, 35, 40, 5),
+                (-8, 1, 0, 63, 96, 45, 40, 5)
             )
         )
 
@@ -456,16 +456,17 @@ class App:
                 i = self.tower_num - 1
                 j = 0
                 k = (pyxel.frame_count - self.fighting_time) // 10 % 3
-                idx = 1 if self.can_win_boss else 2
-                tmp = BOSS_FLOOR_SIZE_W / 2 - u[idx][k][5] - 10
+                idx = 0 if self.can_win_boss else 2
+                tmp = BOSS_FLOOR_SIZE_W / 2 - u[idx][k][5]
                 self.draw_number(
-                    S + TOWER_SKIP + BOSS_WALL_SIZE_SIDE + tmp + u[idx][k][5] / 2,
+                    S + TOWER_SKIP + BOSS_WALL_SIZE_SIDE + tmp
+                    + u[idx][k][5] / 2 + u[idx][k][0],
                     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_BOTTOM -
                     (u[idx][k][1] + u[idx][k][6]) - 7,
                     1, -1, self.fighter_strength
                 )
                 pyxel.blt(
-                    S + TOWER_SKIP + BOSS_WALL_SIZE_SIDE + tmp,
+                    S + TOWER_SKIP + BOSS_WALL_SIZE_SIDE + tmp + u[idx][k][0],
                     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_BOTTOM + 1 -
                     (u[idx][k][1] + u[idx][k][6]),
                     u[idx][k][2], u[idx][k][3], u[idx][k][4],

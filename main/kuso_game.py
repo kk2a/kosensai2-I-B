@@ -91,6 +91,7 @@ class App:
             pyxel.quit()
 
         pyxel.cls(11)
+        self.draw_back()
         self.draw_tower(self.left_slide,
                         TOWER_SKIP + FLOOR_WALL_SIDE,
                         FLOOR_WALL_BOTTOM)
@@ -250,6 +251,20 @@ class App:
                         self.is_fighting = True
                         self.on_fighting = idx
                         self.fighting_time = pyxel.frame_count
+
+    # 背景
+    def draw_back(self) :
+        u = (
+            (0, 0, 0, 0, 0, 256, 256),
+            (256, 0, 0, 0, 0, 256, 256),
+            (512, 0, 0, 0, 0, 128, 256),
+            (0, 256, 0, 0, 0, 256, 108),
+            (256, 256, 0, 0, 0, 256, 108),
+            (512, 256, 0, 0, 0, 128, 108)
+        )
+        for i in range(6):
+            pyxel.image(0).load(0, 0, f"../assets/back{i + 1}.png")
+            pyxel.blt(u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5], u[i][6])
 
     # 最後はボスにするかもしれないので確定ではない
     def draw_tower(self, slide, S, Q):

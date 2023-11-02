@@ -18,11 +18,17 @@ BOSS_WALL_SIZE_SIDE = 16
 TOWER_SKIP = 40
 TOWER_INIT_SKIP_H = 10
 
-DIFFICULTY = "caratheodory"
+DIFFICULTY_LIST = (
+    "easy",
+    "normal",
+    "caratheodory"
+)
+
+DIFFICULTY = DIFFICULTY_LIST[2]
 PROBLEM_NUMBER = -1
 
-if DIFFICULTY == "caratheodory":
-    BOSS_FLOOR_SIZE_W = 180
+if DIFFICULTY == DIFFICULTY_LIST[2]:
+    BOSS_FLOOR_SIZE_W = 204
     BOSS_FLOOR_SIZE_H = 132
     BOSS_FLOOR_BOTTOM = 5
     BOSS_WALL_SIZE_SIDE = 16
@@ -291,11 +297,11 @@ class App:
                 0
             )
 
-        if DIFFICULTY == "caratheodory":
+        if DIFFICULTY == DIFFICULTY_LIST[2]:
             pyxel.blt(
                 TOWER_SKIP + S * self.tower_num - slide,
                 DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
-                2, 76, 125, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
+                2, 40, 125, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
             )
         else:
             pyxel.blt(
@@ -357,8 +363,8 @@ class App:
             ((10, 0, 0, 160, 3, 88, 93, 15), (10, 1, 1, 160, 3, 88, 93, 15)),
             ((-10, 0, 0, 160, 3, 88, 93, 15), (-10, 1, 2, 27, 3, 93, 93, 15),
              (0, 0, 2, 136, 3, 102, 93, 15)),
-            ((-10, 0, 0, 160, 3, 88, 93, 15), (-10, 1, 2, 27, 3, 93, 93, 15),
-             (-10, 0, 2, 28, 101, 90, 91, 15))
+            ((-5, 0, 0, 160, 3, 88, 93, 15), (-5, 1, 2, 27, 3, 93, 93, 15),
+             (-5, 0, 2, 28, 101, 90, 91, 15))
         )
 
         pyxel.load(LOAD_PATH[1], image=True)
@@ -395,7 +401,7 @@ class App:
         ):
             k = (pyxel.frame_count) // 25 % 2  # 一般には % len(u[idx])
             # 変わる
-            idx = 10 if DIFFICULTY == "caratheodory" else 7
+            idx = 10 if DIFFICULTY == DIFFICULTY_LIST[2] else 7
             tmp = (BOSS_FLOOR_SIZE_W + u[idx][k][5]) / 2
             self.draw_number(
                 S * (i + 1) + TOWER_SKIP + BOSS_FLOOR_SIZE_W - tmp - slide +
@@ -413,7 +419,7 @@ class App:
             )
         else:
             k = (pyxel.frame_count - self.fighting_time) // 10 % 3
-            if DIFFICULTY == "caratheodory":
+            if DIFFICULTY == DIFFICULTY_LIST[2]:
                 # 変わる
                 idx = 12 if self.can_win_boss else 11
             else:
@@ -486,7 +492,7 @@ class App:
                 j = 0
                 k = (pyxel.frame_count - self.fighting_time) // 10 % 3
                 idx = 0 if self.can_win_boss else 2
-                if DIFFICULTY == "caratheodory":
+                if DIFFICULTY == DIFFICULTY_LIST[2]:
                     idx = 4 if self.can_win_boss else 3
                 tmp = BOSS_FLOOR_SIZE_W / 2 - u[idx][k][5]
                 self.draw_number(

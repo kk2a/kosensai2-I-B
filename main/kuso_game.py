@@ -18,14 +18,14 @@ BOSS_WALL_SIZE_SIDE = 16
 TOWER_SKIP = 40
 TOWER_INIT_SKIP_H = 10
 
-DIFFICULTY = "easy"
-PROBLEM_NUMBER = 0
+DIFFICULTY = "caratheodory"
+PROBLEM_NUMBER = -1
 
-# if DIFFICULTY == "caratheodory":
-#     BOSS_FLOOR_SIZE_W = 184
-#     BOSS_FLOOR_SIZE_H = 132
-#     BOSS_FLOOR_BOTTOM = 5
-#     BOSS_WALL_SIZE_SIDE = 16
+if DIFFICULTY == "caratheodory":
+    BOSS_FLOOR_SIZE_W = 180
+    BOSS_FLOOR_SIZE_H = 132
+    BOSS_FLOOR_BOTTOM = 5
+    BOSS_WALL_SIZE_SIDE = 16
 
 
 LOAD_PATH = (
@@ -283,19 +283,26 @@ class App:
                     w[idx][5], w[idx][6], w[idx][7]
                 )
 
-                if (j == T - 1):
-                    pyxel.line(
-                        TOWER_SKIP + S * (i + 1) - slide,
-                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
-                        TOWER_SKIP + S * (i + 1) - slide + FLOOR_WALL_SIDE - 1,
-                        DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
-                        0
-                    )
-        pyxel.blt(
-            TOWER_SKIP + S * self.tower_num - slide,
-            DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 144,
-            1, 88, 112, 164, 144, 5
-        )
+            pyxel.line(
+                TOWER_SKIP + S * (i + 1) - slide,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
+                TOWER_SKIP + S * (i + 1) - slide + FLOOR_WALL_SIDE - 1,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
+                0
+            )
+
+        if DIFFICULTY == "caratheodory":
+            pyxel.blt(
+                TOWER_SKIP + S * self.tower_num - slide,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
+                2, 76, 125, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
+            )
+        else:
+            pyxel.blt(
+                TOWER_SKIP + S * self.tower_num - slide,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
+                1, 88, 112, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
+            )
 
     # 武器
     def draw_equip(self, slide, S, Q):
@@ -347,6 +354,11 @@ class App:
              (10, 1, 0, 191, 168, 57, 53, 15)),
             ((10, 1, 0, 191, 101, 53, 58, 15), (10, 1, 1, 201, 164, 45, 60, 15),
              (10, 1, 2, 184, 169, 62, 55, 15)),
+            ((10, 0, 0, 160, 3, 88, 93, 15), (10, 1, 1, 160, 3, 88, 93, 15)),
+            ((-10, 0, 0, 160, 3, 88, 93, 15), (-10, 1, 2, 27, 3, 93, 93, 15),
+             (0, 0, 2, 136, 3, 102, 93, 15)),
+            ((-10, 0, 0, 160, 3, 88, 93, 15), (-10, 1, 2, 27, 3, 93, 93, 15),
+             (-10, 0, 2, 28, 101, 90, 91, 15))
         )
 
         pyxel.load(LOAD_PATH[1], image=True)
@@ -383,7 +395,7 @@ class App:
         ):
             k = (pyxel.frame_count) // 25 % 2  # 一般には % len(u[idx])
             # 変わる
-            idx = 7 if DIFFICULTY == "caratheodory" else 7
+            idx = 10 if DIFFICULTY == "caratheodory" else 7
             tmp = (BOSS_FLOOR_SIZE_W + u[idx][k][5]) / 2
             self.draw_number(
                 S * (i + 1) + TOWER_SKIP + BOSS_FLOOR_SIZE_W - tmp - slide +
@@ -403,7 +415,7 @@ class App:
             k = (pyxel.frame_count - self.fighting_time) // 10 % 3
             if DIFFICULTY == "caratheodory":
                 # 変わる
-                idx = 8 if self.can_win_boss else 9
+                idx = 12 if self.can_win_boss else 11
             else:
                 idx = 8 if self.can_win_boss else 9
             tmp = u[idx][k][5] + u[idx][k][0] + BOSS_WALL_SIZE_SIDE + 10
@@ -440,7 +452,17 @@ class App:
                 (-15, 1, 0, 32, 16, 32, 40, 5),
                 (-19, 1, 0, 28, 96, 35, 40, 5),
                 (-18, 1, 0, 35, 152, 31, 32, 5)
-            )
+            ),
+            (
+                (-25, 1, 0, 32, 16, 32, 40, 5),
+                (-29, 1, 0, 28, 96, 35, 40, 5),
+                (-28, 1, 0, 35, 152, 31, 32, 5)
+            ),
+            (
+                (-27, 1, 0, 32, 16, 32, 40, 5),
+                (-20, 1, 0, 32, 56, 32, 40, 5),
+                (10, 1, 0, 64, 56, 40, 40, 5)
+            ),
         )
 
         # 武器入手アニメーション
@@ -464,6 +486,8 @@ class App:
                 j = 0
                 k = (pyxel.frame_count - self.fighting_time) // 10 % 3
                 idx = 0 if self.can_win_boss else 2
+                if DIFFICULTY == "caratheodory":
+                    idx = 4 if self.can_win_boss else 3
                 tmp = BOSS_FLOOR_SIZE_W / 2 - u[idx][k][5]
                 self.draw_number(
                     S + TOWER_SKIP + BOSS_WALL_SIZE_SIDE + tmp

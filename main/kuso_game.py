@@ -24,8 +24,8 @@ DIFFICULTY_LIST = (
     "caratheodory"
 )
 
-DIFFICULTY = DIFFICULTY_LIST[2]
-PROBLEM_NUMBER = 1
+DIFFICULTY = DIFFICULTY_LIST[1]
+PROBLEM_NUMBER = 0
 
 if DIFFICULTY == DIFFICULTY_LIST[2]:
     BOSS_FLOOR_SIZE_W = 204
@@ -56,8 +56,8 @@ class App:
         pyxel.init(DISPALY_SIZE_W, DISPALY_SIZE_H, title="kuso game")
         pyxel.mouse(True)
         self.info()
-        load_bgm(0, "../assets/bgm.json", 0, 1, 2)
-        pyxel.playm(0, loop=True)
+        # load_bgm(0, "../assets/bgm.json", 0, 1, 2)
+        # pyxel.playm(0, loop=True)
         pyxel.run(self.update, self.draw)
 
     def update(self):

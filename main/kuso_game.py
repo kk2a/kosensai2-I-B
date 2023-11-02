@@ -14,7 +14,7 @@ CEIL_HEIGHT = 98
 TOWER_SKIP = 40
 TOWER_INIT_SKIP_H = 10
 
-DIFFICULTY = "caratheodory"
+DIFFICULTY = "easy"
 PROBLEM_NUMBER = 0
 
 LOAD_PATH = (
@@ -39,9 +39,8 @@ class App:
         pyxel.init(DISPALY_SIZE_W, DISPALY_SIZE_H, title="kuso game")
         pyxel.mouse(True)
         self.info()
-        load_bgm(0, "../assets/bgm.json", 4, 5, 6)
+        load_bgm(0, "../assets/bgm.json", 0, 1, 2)
         pyxel.playm(0, loop=True)
-        
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -174,8 +173,11 @@ class App:
             self.on_fighting = -1
             self.passed += 1
 
-        elif self.is_fighting and (pyxel.frame_count - self.fighting_time) == 22:
-            t, _, _, _ = self.tower_info[self.fighter_now][self.on_fighting]
+        elif (
+            self.is_fighting and
+            (pyxel.frame_count - self.fighting_time) == 22
+        ):
+            t = self.tower_info[self.fighter_now][self.on_fighting][0]
             pyxel.load(LOAD_PATH[0], sound=True)
             pyxel.play(3, t - 1)
 
@@ -304,7 +306,7 @@ class App:
         )
 
         pyxel.load(LOAD_PATH[1], image=True)
-        for i in range(self.tower_num):
+        for i in range(self.tower_num - 1):
             T = len(self.tower_info[i])
             for j in range(T):
                 t, b, m, idx = self.tower_info[i][j]
@@ -482,9 +484,6 @@ class App:
         self.on_fighting = -1
         self.fighting_time = 0
         self.thinking = 0  # 自己満足です
-
-        #
-        
 
         #
         self.enemy_num = 7

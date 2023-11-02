@@ -13,13 +13,20 @@ CEIL_HEIGHT = 98
 BOSS_FLOOR_SIZE_W = 164
 BOSS_FLOOR_SIZE_H = 144
 BOSS_FLOOR_BOTTOM = 5
-BOSS_WALL_SIZE_SIDE = 20
+BOSS_WALL_SIZE_SIDE = 16
 
 TOWER_SKIP = 40
 TOWER_INIT_SKIP_H = 10
 
 DIFFICULTY = "easy"
 PROBLEM_NUMBER = 0
+
+# if DIFFICULTY == "caratheodory":
+#     BOSS_FLOOR_SIZE_W = 184
+#     BOSS_FLOOR_SIZE_H = 132
+#     BOSS_FLOOR_BOTTOM = 5
+#     BOSS_WALL_SIZE_SIDE = 16
+
 
 LOAD_PATH = (
     "../assets/fighter.pyxres",
@@ -432,7 +439,7 @@ class App:
             (
                 (-15, 1, 0, 32, 16, 32, 40, 5),
                 (-19, 1, 0, 28, 96, 35, 40, 5),
-                (-8, 1, 0, 63, 96, 45, 40, 5)
+                (-18, 1, 0, 35, 152, 31, 32, 5)
             )
         )
 
@@ -462,7 +469,7 @@ class App:
                     S + TOWER_SKIP + BOSS_WALL_SIZE_SIDE + tmp
                     + u[idx][k][5] / 2 + u[idx][k][0],
                     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_BOTTOM -
-                    (u[idx][k][1] + u[idx][k][6]) - 7,
+                    u[idx][k][6] - 10,
                     1, -1, self.fighter_strength
                 )
                 pyxel.blt(

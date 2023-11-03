@@ -98,19 +98,21 @@ class App:
     def draw(self):
         # おめでとう的なのをしたい
         if self.fighter_now >= self.tower_num:
-            pyxel.cls(0)
-            pyxel.text(
-                DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2,
-                "Congraturation!", 1
+            pyxel.cls(7)
+            pyxel.load(LOAD_PATH[3], image=True)
+            u = (
+                (0, 0, 0, 240, 48, 7),
+                (-1, -1)
             )
-            pyxel.text(
-                DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2 + 5,
-                f"your strength is {self.fighter_strength}!!", 1
-            )
-            pyxel.text(
-                DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2 + 10,
-                f"max strength is {self.max_strength}!!", 1
-            )
+            tmp = (DISPALY_SIZE_H - 48) / 2  # 48 = \sum_{i} u[i][4]
+            for i in range(1):
+                pyxel.blt((DISPALY_SIZE_W - u[i][3]) / 2, tmp + 32 * i,
+                          u[i][0], u[i][1], u[i][2],
+                          u[i][3], u[i][4], u[i][5])
+                if pyxel.btnp(pyxel.KEY_Q):
+                    pyxel.quit()
+                if pyxel.btnp(pyxel.KEY_R):
+                    self.info()
             return
 
         if not self.death:

@@ -141,11 +141,13 @@ class App:
                     self.draw_fighter(self.left_slide,
                                       TOWER_SKIP + FLOOR_WALL_SIDE,
                                       FLOOR_WALL_BOTTOM)
-        else:
-            self.draw_fighter(self.left_slide,
-                              TOWER_SKIP + FLOOR_WALL_SIDE,
-                              FLOOR_WALL_BOTTOM)
-            self.draw_enemy(self.left_slide,
+            else:
+                self.draw_fighter(self.left_slide,
+                                  TOWER_SKIP + FLOOR_WALL_SIDE,
+                                  FLOOR_WALL_BOTTOM)
+                self.draw_enemy(self.left_slide,
+                                TOWER_SKIP + FLOOR_WALL_SIDE,
+                                FLOOR_WALL_BOTTOM)
         else:
             pyxel.cls(col=COL_DEATH)
             display_text = TEXT_DEATH[:]

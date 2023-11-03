@@ -39,11 +39,11 @@ LOAD_PATH = (
     "../assets/gameover.pyxres"
 )
 
-difficult_receive = int(sys.stdin.read())
-print(difficult_receive)
+difficult_receive, PROBLEM_NUMBER = list(map(int, sys.stdin.read().split()))
+# print(difficult_receive)
 DIFFICULTY = DIFFICULTY_LIST[difficult_receive]
 # DIFFICULTY = DIFFICULTY_LIST[2]
-PROBLEM_NUMBER = -1
+# PROBLEM_NUMBER = -1
 
 if DIFFICULTY == DIFFICULTY_LIST[2]:
     BOSS_FLOOR_SIZE_W = 204

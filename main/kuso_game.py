@@ -155,6 +155,7 @@ class App:
                     pyxel.quit()
                 if pyxel.btnp(pyxel.KEY_R):
                     self.info()
+
         # # debug
         # pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
         # floor_idx = (DISPALY_SIZE_H - TOWER_INIT_SKIP_H -

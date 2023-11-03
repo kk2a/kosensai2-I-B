@@ -30,7 +30,10 @@ DIFFICULTY_LIST = (
 
 LOAD_PATH = (
     "../assets/fighter.pyxres",
-    "../assets/enemy.pyxres"
+    "../assets/enemy.pyxres",
+    "../assets/bgm.json",
+    "../assets/gameclear.pyxres",
+    "../assets/gameover.pyxres"
 )
 
 difficult_receive = int(sys.stdin.read())
@@ -66,9 +69,6 @@ TEXT_DEATH = ["GAME OVER", "(Q) quit", "(R)restart"]
 COL_TEXT_DEATH = 7
 HEIGHT_DEATH = 5
 
-WIDTH = 40
-HEIGHT = 50
-
 HEIGHT_SCORE = pyxel.FONT_HEIGHT
 COL_SCORE = 6
 COL_SCORE_BACKGROUND = 5
@@ -80,8 +80,8 @@ class App:
         pyxel.init(DISPALY_SIZE_W, DISPALY_SIZE_H, title="kuso game")
         pyxel.mouse(True)
         self.info()
-        # load_bgm(0, "../assets/bgm.json", 0, 1, 2)
-        # pyxel.playm(0, loop=True)
+        load_bgm(0, LOAD_PATH[2], 0, 1, 2)
+        pyxel.playm(0, loop=True)
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -111,8 +111,7 @@ class App:
                 DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2 + 10,
                 f"max strength is {self.max_strength}!!", 1
             )
-            pyxel.show()
-            pyxel.quit()
+            return
 
         if not self.death:
             self.draw_back()
@@ -150,12 +149,18 @@ class App:
                                 FLOOR_WALL_BOTTOM)
         else:
             pyxel.cls(col=COL_DEATH)
-            display_text = TEXT_DEATH[:]
             # display_text.insert(1, f"{self.fighter_strength:04}")
-            for i, text in enumerate(display_text):
-                y_offset = (pyxel.FONT_HEIGHT + 2) * i
-                text_x = 100
-                pyxel.text(text_x, HEIGHT_DEATH + y_offset, text, COL_TEXT_DEATH)
+            pyxel.load(LOAD_PATH[4], image=True)
+            u = (
+                (0, 0, 0, 256, 32, 1),
+                (0, 0, 33, 96, 32, 1),
+                (0, 0, 64, 96, 32, 1)
+            )
+            tmp = (DISPALY_SIZE_H - 32 * 3) / 2  # 32 * 3 = \sum_{i}u[i][4]
+            for i in range(3):
+                pyxel.blt((DISPALY_SIZE_W - u[i][3]) / 2, tmp + 32 * i,
+                          u[i][0], u[i][1], u[i][2],
+                          u[i][3], u[i][4], u[i][5])
                 if pyxel.btnp(pyxel.KEY_Q):
                     pyxel.quit()
                 if pyxel.btnp(pyxel.KEY_R):

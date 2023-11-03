@@ -131,13 +131,13 @@ class App:
                             TOWER_SKIP + FLOOR_WALL_SIDE,
                             FLOOR_WALL_BOTTOM)
 
-        # debug
-        pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
-        floor_idx = (DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
-                     pyxel.mouse_y) // FLOOR_WALL_BOTTOM
-        pyxel.text(0, 0, f"{floor_idx}", 0)
-        pyxel.text(10, 10, f"{self.fighter_strength}", 0)
-        pyxel.text(10, 20, f"{self.passed}", 0)
+        # # debug
+        # pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
+        # floor_idx = (DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
+        #              pyxel.mouse_y) // FLOOR_WALL_BOTTOM
+        # pyxel.text(0, 0, f"{floor_idx}", 0)
+        # pyxel.text(10, 10, f"{self.fighter_strength}", 0)
+        # pyxel.text(10, 20, f"{self.passed}", 0)
 
     def update_slide(self, p, le):
         # スライドしている最中

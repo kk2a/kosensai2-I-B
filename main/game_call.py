@@ -43,7 +43,7 @@ class App(ctk.CTk):
                                                     border_color="dimgray",
                                                     text_color="black",
                                                     text="かんたん　　",
-                                                    bg_color="gray",
+                                                    bg_color="gray80",
                                                     command=self.easy_button_clicked,
                                                     variable=self.radio_var,
                                                     value="easy")
@@ -54,7 +54,7 @@ class App(ctk.CTk):
                                                       border_color="dimgray",
                                                       text_color="black",
                                                       text="ふつう　　　",
-                                                      bg_color="gray",
+                                                      bg_color="gray80",
                                                       command=self.normal_button_clicked,
                                                       variable=self.radio_var,
                                                       value="normal")
@@ -65,7 +65,7 @@ class App(ctk.CTk):
                                                             #border_color="dimgray",
                                                             text_color="black",
                                                             text="カラテオドリ",
-                                                            bg_color="gray",
+                                                            bg_color="gray80",
                                                             command=self.caratheodory_button_clicked,
                                                             variable=self.radio_var,
                                                             value="caratheodory")
@@ -77,7 +77,7 @@ class App(ctk.CTk):
                                                          #border_color="dimgray",
                                                          text_color="black",
                                                          text="問題１　　　",
-                                                         bg_color="gray",
+                                                         bg_color="gray80",
                                                          command=self.problem_button_cliked_1,
                                                          variable=self.radio_p_var,
                                                          value="0")
@@ -88,7 +88,7 @@ class App(ctk.CTk):
                                                          #border_color="dimgray",
                                                          text_color="black",
                                                          text="問題２　　　",
-                                                         bg_color="gray",
+                                                         bg_color="gray80",
                                                          command=self.problem_button_cliked_2,
                                                          variable=self.radio_p_var,
                                                          value="1")
@@ -99,7 +99,7 @@ class App(ctk.CTk):
                                                          #border_color="dimgray",
                                                          text_color="black",
                                                          text="問題３　　　",
-                                                         bg_color="gray",
+                                                         bg_color="gray80",
                                                          command=self.problem_button_cliked_3,
                                                          variable=self.radio_p_var,
                                                          value="2")

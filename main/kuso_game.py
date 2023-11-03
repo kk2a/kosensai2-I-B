@@ -18,10 +18,18 @@ BOSS_WALL_SIZE_SIDE = 16
 TOWER_SKIP = 40
 TOWER_INIT_SKIP_H = 10
 
+ENEMY_NUM = 7
+EQUIP_NUM = 5
+
 DIFFICULTY_LIST = (
     "easy",
     "normal",
     "caratheodory"
+)
+
+LOAD_PATH = (
+    "../assets/fighter.pyxres",
+    "../assets/enemy.pyxres"
 )
 
 DIFFICULTY = DIFFICULTY_LIST[2]
@@ -32,12 +40,6 @@ if DIFFICULTY == DIFFICULTY_LIST[2]:
     BOSS_FLOOR_SIZE_H = 132
     BOSS_FLOOR_BOTTOM = 5
     BOSS_WALL_SIZE_SIDE = 16
-
-
-LOAD_PATH = (
-    "../assets/fighter.pyxres",
-    "../assets/enemy.pyxres"
-)
 
 
 def load_bgm(msc, filename, snd1, snd2, snd3):
@@ -659,10 +661,6 @@ class App:
         #
         self.can_win_boss = False
 
-        #
-        self.enemy_num = 7
-        self.equip_num = 5
-
         # テキストから問題を読み込む
         with open(f"../problem/{DIFFICULTY}/{PROBLEM_NUMBER}.txt") as f:
             line = f.readline()
@@ -681,9 +679,9 @@ class App:
                     b = list(map(int, line.rstrip("\n").split()))
 
                     if b[0] == 1:
-                        b.append(pyxel.rndi(0, self.enemy_num - 1))
+                        b.append(pyxel.rndi(0, ENEMY_NUM - 1))
                     else:
-                        b.append(pyxel.rndi(0, self.equip_num - 1))
+                        b.append(pyxel.rndi(0, EQUIP_NUM - 1))
                     a.append(b)
                 self.tower_info.append(a)
             self.max_strength = int(f.readline().rstrip())

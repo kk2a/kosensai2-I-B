@@ -22,6 +22,9 @@ TOWER_INIT_SKIP_H = 10
 ENEMY_NUM = 7
 EQUIP_NUM = 5
 
+COL_DEATH = 0
+COL_CLEAR = 7
+
 DIFFICULTY_LIST = (
     "easy",
     "normal",
@@ -59,21 +62,6 @@ def load_bgm(msc, filename, snd1, snd2, snd3):
         pyxel.sound(snd3).set(*bgm[2])
         pyxel.music(msc).set([snd1], [snd2], [snd3], [])
 
-COL_BACKGROUND = 3
-COL_BODY = 11
-COL_HEAD = 7
-COL_DEATH = 0
-COL_APPLE = 8
-
-TEXT_DEATH = ["GAME OVER", "(Q) quit", "(R)restart"]
-COL_TEXT_DEATH = 7
-HEIGHT_DEATH = 5
-
-HEIGHT_SCORE = pyxel.FONT_HEIGHT
-COL_SCORE = 6
-COL_SCORE_BACKGROUND = 5
-
-
 
 class App:
     def __init__(self):
@@ -98,7 +86,7 @@ class App:
     def draw(self):
         # おめでとう的なのをしたい
         if self.fighter_now >= self.tower_num:
-            pyxel.cls(7)
+            pyxel.cls(COL_CLEAR)
             pyxel.load(LOAD_PATH[3], image=True)
             u = (
                 (0, 0, 0, 240, 48, 7),
@@ -167,8 +155,6 @@ class App:
                     pyxel.quit()
                 if pyxel.btnp(pyxel.KEY_R):
                     self.info()
-
-
         # # debug
         # pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
         # floor_idx = (DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
@@ -242,7 +228,6 @@ class App:
             if not f:
                 self.on_fighting = -1
                 self.death = True
-                
                 return
 
             # 成功
@@ -690,12 +675,6 @@ class App:
                     x - pow * 4 + 8 * i, y + 1, 1, 8 * n, 0, 8, 8, 5
                 )
 
-    def center_text(text, page_width, char_width=pyxel.FONT_WIDTH):
-        """Helper function for calculating the start x value for centered text."""
-
-        text_width = len(text) * char_width
-        return (page_width - text_width) // 2
-
     # メンバ変数のまとめ
     def info(self):
         self.fighter_now = 0  # 現在何棟目か
@@ -708,7 +687,6 @@ class App:
         self.fighting_time = 0
         self.thinking = 0  # 自己満足です
         self.death = False
-
 
         #
         self.can_win_boss = False

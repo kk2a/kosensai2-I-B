@@ -23,7 +23,7 @@ COL_HEAD = 7
 COL_DEATH = 0
 COL_APPLE = 8
 
-TEXT_DEATH = ["GAME OVER", "(G)give up", "(R)restart"]
+TEXT_DEATH = ["GAME OVER", "(Q) quit", "(R)restart"]
 COL_TEXT_DEATH = 7
 HEIGHT_DEATH = 5
 
@@ -102,7 +102,7 @@ class App:
                 y_offset = (pyxel.FONT_HEIGHT + 2) * i
                 text_x = 100
                 pyxel.text(text_x, HEIGHT_DEATH + y_offset, text, COL_TEXT_DEATH)
-                if pyxel.btnp(pyxel.KEY_G):
+                if pyxel.btnp(pyxel.KEY_Q):
                     pyxel.quit()
                 if pyxel.btnp(pyxel.KEY_R):
                     self.info()

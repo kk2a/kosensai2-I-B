@@ -350,13 +350,13 @@ class App:
             pyxel.blt(
                 TOWER_SKIP + S * self.tower_num - slide,
                 DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
-                2, 40, 125, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
+                2, 40, 125, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 15
             )
         else:
             pyxel.blt(
                 TOWER_SKIP + S * self.tower_num - slide,
                 DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
-                1, 88, 112, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
+                1, 88, 112, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 15
             )
 
     # 武器
@@ -531,7 +531,7 @@ class App:
         v = (
             (2, 1, 0, 0, 16, 32, 40, 5),
             (2, 1, 0, 32, 16, 32, 40, 5),
-            (6, 2, 0, 5, 142, 27, 66, 5)
+            (6, 1, 0, 5, 142, 27, 66, 5)
         )
 
         # 待機アニメーション

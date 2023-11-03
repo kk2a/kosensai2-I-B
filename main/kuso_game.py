@@ -24,8 +24,8 @@ DIFFICULTY_LIST = (
     "caratheodory"
 )
 
-DIFFICULTY = DIFFICULTY_LIST[1]
-PROBLEM_NUMBER = 0
+DIFFICULTY = DIFFICULTY_LIST[2]
+PROBLEM_NUMBER = -1
 
 if DIFFICULTY == DIFFICULTY_LIST[2]:
     BOSS_FLOOR_SIZE_W = 204
@@ -253,7 +253,7 @@ class App:
                         self.fighting_time = pyxel.frame_count
 
     # 背景
-    def draw_back(self) :
+    def draw_back(self):
         u = (
             (0, 0, 0, 0, 0, 256, 256),
             (256, 0, 0, 0, 0, 256, 256),
@@ -264,7 +264,8 @@ class App:
         )
         for i in range(6):
             pyxel.image(0).load(0, 0, f"../assets/back{i + 1}.png")
-            pyxel.blt(u[i][0], u[i][1], u[i][2], u[i][3], u[i][4], u[i][5], u[i][6])
+            pyxel.blt(u[i][0], u[i][1], u[i][2], u[i][3],
+                      u[i][4], u[i][5], u[i][6])
 
     # 最後はボスにするかもしれないので確定ではない
     def draw_tower(self, slide, S, Q):
@@ -371,22 +372,22 @@ class App:
             ((6, 1, 0, 0, 104, 24, 32, 15), (6, 1, 0, 32, 104, 24, 32, 15)),
             ((3, 1, 0, 0, 143, 26, 33, 15), (3, 1, 0, 32, 143, 26, 33, 15)),
             ((2, 1, 0, 56, 0, 32, 24, 15), (2, 1, 0, 88, 0, 32, 24, 15)),
-            ((10, 1, 0, 191, 101, 53, 58, 15),
-             (10, 1, 1, 191, 103, 53, 56, 15)),
+            ((0, 1, 0, 191, 101, 53, 58, 15),
+             (0, 1, 1, 191, 103, 53, 56, 15)),
             ((10, 1, 0, 191, 101, 53, 58, 15),
              (10, 1, 1, 201, 164, 45, 60, 15),
              (10, 1, 0, 191, 168, 57, 53, 15)),
             ((10, 1, 0, 191, 101, 53, 58, 15),
              (10, 1, 1, 201, 164, 45, 60, 15),
              (10, 1, 2, 184, 169, 62, 55, 15)),
-            ((10, 0, 0, 160, 3, 88, 93, 15),
-             (10, 1, 1, 160, 3, 88, 93, 15)),
-            ((-10, 0, 0, 160, 3, 88, 93, 15),
-             (-10, 1, 2, 27, 3, 93, 93, 15),
-             (0, 0, 2, 136, 3, 102, 93, 15)),
+            ((20, 15, 0, 160, 3, 88, 93, 15),
+             (20, 12, 1, 160, 3, 88, 93, 15)),
             ((-5, 0, 0, 160, 3, 88, 93, 15),
              (-5, 1, 2, 27, 3, 93, 93, 15),
-             (-5, 0, 2, 28, 101, 90, 91, 15))
+             (-5, 0, 2, 28, 101, 90, 91, 15)),
+            ((-10, 0, 0, 160, 3, 88, 93, 15),
+             (-10, 1, 2, 27, 3, 93, 93, 15),
+             (0, 0, 2, 136, 3, 102, 93, 15))
         )
 
         pyxel.load(LOAD_PATH[1], image=True)
@@ -433,7 +434,8 @@ class App:
                 t, b, m
             )
             pyxel.blt(
-                S * (i + 1) + TOWER_SKIP + BOSS_FLOOR_SIZE_W - tmp - slide,
+                S * (i + 1) + TOWER_SKIP + BOSS_FLOOR_SIZE_W - tmp - slide +
+                u[idx][k][0],
                 DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_BOTTOM + 1 -
                 (u[idx][k][1] + u[idx][k][6]),
                 u[idx][k][2], u[idx][k][3], u[idx][k][4],
@@ -443,7 +445,7 @@ class App:
             k = (pyxel.frame_count - self.fighting_time) // 10 % 3
             if DIFFICULTY == DIFFICULTY_LIST[2]:
                 # 変わる
-                idx = 12 if self.can_win_boss else 11
+                idx = 11 if self.can_win_boss else 12
             else:
                 idx = 8 if self.can_win_boss else 9
             tmp = u[idx][k][5] + u[idx][k][0] + BOSS_WALL_SIZE_SIDE + 10

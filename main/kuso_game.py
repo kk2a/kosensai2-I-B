@@ -56,6 +56,24 @@ def load_bgm(msc, filename, snd1, snd2, snd3):
         pyxel.sound(snd3).set(*bgm[2])
         pyxel.music(msc).set([snd1], [snd2], [snd3], [])
 
+COL_BACKGROUND = 3
+COL_BODY = 11
+COL_HEAD = 7
+COL_DEATH = 0
+COL_APPLE = 8
+
+TEXT_DEATH = ["GAME OVER", "(Q) quit", "(R)restart"]
+COL_TEXT_DEATH = 7
+HEIGHT_DEATH = 5
+
+WIDTH = 40
+HEIGHT = 50
+
+HEIGHT_SCORE = pyxel.FONT_HEIGHT
+COL_SCORE = 6
+COL_SCORE_BACKGROUND = 5
+
+
 
 class App:
     def __init__(self):
@@ -96,40 +114,51 @@ class App:
             pyxel.show()
             pyxel.quit()
 
-        pyxel.cls(11)
-        self.draw_back()
-        self.draw_tower(self.left_slide,
-                        TOWER_SKIP + FLOOR_WALL_SIDE,
-                        FLOOR_WALL_BOTTOM)
-        self.draw_equip(self.left_slide,
-                        TOWER_SKIP + FLOOR_WALL_SIDE,
-                        FLOOR_WALL_BOTTOM)
-        if self.is_fighting:
-            if (
-                self.fighter_now == self.tower_num - 1 and
-                not self.can_win_boss
-            ):
-                self.draw_fighter(self.left_slide,
-                                  TOWER_SKIP + FLOOR_WALL_SIDE,
-                                  FLOOR_WALL_BOTTOM)
-                self.draw_enemy(self.left_slide,
-                                TOWER_SKIP + FLOOR_WALL_SIDE,
-                                FLOOR_WALL_BOTTOM)
-            else:
-                self.draw_enemy(self.left_slide,
-                                TOWER_SKIP + FLOOR_WALL_SIDE,
-                                FLOOR_WALL_BOTTOM)
-                pyxel.load(LOAD_PATH[0], image=True)
-                self.draw_fighter(self.left_slide,
-                                  TOWER_SKIP + FLOOR_WALL_SIDE,
-                                  FLOOR_WALL_BOTTOM)
+        if not self.death:
+            self.draw_back()
+            self.draw_tower(self.left_slide,
+                            TOWER_SKIP + FLOOR_WALL_SIDE,
+                            FLOOR_WALL_BOTTOM)
+            self.draw_equip(self.left_slide,
+                            TOWER_SKIP + FLOOR_WALL_SIDE,
+                            FLOOR_WALL_BOTTOM)
+            if self.is_fighting:
+                if (
+                    self.fighter_now == self.tower_num - 1 and
+                    not self.can_win_boss
+                ):
+                    self.draw_fighter(self.left_slide,
+                                      TOWER_SKIP + FLOOR_WALL_SIDE,
+                                      FLOOR_WALL_BOTTOM)
+                    self.draw_enemy(self.left_slide,
+                                    TOWER_SKIP + FLOOR_WALL_SIDE,
+                                    FLOOR_WALL_BOTTOM)
+                else:
+                    self.draw_enemy(self.left_slide,
+                                    TOWER_SKIP + FLOOR_WALL_SIDE,
+                                    FLOOR_WALL_BOTTOM)
+                    pyxel.load(LOAD_PATH[0], image=True)
+                    self.draw_fighter(self.left_slide,
+                                      TOWER_SKIP + FLOOR_WALL_SIDE,
+                                      FLOOR_WALL_BOTTOM)
         else:
             self.draw_fighter(self.left_slide,
                               TOWER_SKIP + FLOOR_WALL_SIDE,
                               FLOOR_WALL_BOTTOM)
             self.draw_enemy(self.left_slide,
-                            TOWER_SKIP + FLOOR_WALL_SIDE,
-                            FLOOR_WALL_BOTTOM)
+        else:
+            pyxel.cls(col=COL_DEATH)
+            display_text = TEXT_DEATH[:]
+            # display_text.insert(1, f"{self.fighter_strength:04}")
+            for i, text in enumerate(display_text):
+                y_offset = (pyxel.FONT_HEIGHT + 2) * i
+                text_x = 100
+                pyxel.text(text_x, HEIGHT_DEATH + y_offset, text, COL_TEXT_DEATH)
+                if pyxel.btnp(pyxel.KEY_Q):
+                    pyxel.quit()
+                if pyxel.btnp(pyxel.KEY_R):
+                    self.info()
+
 
         # # debug
         # pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
@@ -203,6 +232,8 @@ class App:
             # ここでゲームオーバーだと思う
             if not f:
                 self.on_fighting = -1
+                self.death = True
+                
                 return
 
             # 成功
@@ -650,6 +681,12 @@ class App:
                     x - pow * 4 + 8 * i, y + 1, 1, 8 * n, 0, 8, 8, 5
                 )
 
+    def center_text(text, page_width, char_width=pyxel.FONT_WIDTH):
+        """Helper function for calculating the start x value for centered text."""
+
+        text_width = len(text) * char_width
+        return (page_width - text_width) // 2
+
     # メンバ変数のまとめ
     def info(self):
         self.fighter_now = 0  # 現在何棟目か
@@ -661,6 +698,8 @@ class App:
         self.on_fighting = -1
         self.fighting_time = 0
         self.thinking = 0  # 自己満足です
+        self.death = False
+
 
         #
         self.can_win_boss = False

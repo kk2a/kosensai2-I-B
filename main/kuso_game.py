@@ -1,4 +1,5 @@
 import pyxel
+import sys
 
 DISPALY_SIZE_W = 400 + 120 * 2
 DISPALY_SIZE_H = 364
@@ -24,7 +25,7 @@ EQUIP_NUM = 5
 DIFFICULTY_LIST = (
     "easy",
     "normal",
-    "caratheodory"
+    "Caratheodory"
 )
 
 LOAD_PATH = (
@@ -32,7 +33,10 @@ LOAD_PATH = (
     "../assets/enemy.pyxres"
 )
 
-DIFFICULTY = DIFFICULTY_LIST[2]
+difficult_receive = int(sys.stdin.read())
+print(difficult_receive)
+DIFFICULTY = DIFFICULTY_LIST[difficult_receive]
+# DIFFICULTY = DIFFICULTY_LIST[2]
 PROBLEM_NUMBER = -1
 
 if DIFFICULTY == DIFFICULTY_LIST[2]:

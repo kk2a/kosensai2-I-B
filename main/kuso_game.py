@@ -1,4 +1,5 @@
 import pyxel
+import sys
 
 DISPALY_SIZE_W = 400 + 120 * 2
 DISPALY_SIZE_H = 364
@@ -9,13 +10,51 @@ WALL_SIZE_BOTTOM = 8
 WALL_SIZE_SIDE = 16
 FLOOR_WALL_SIDE = 2 * WALL_SIZE_SIDE + FLOOR_SIZE_W
 FLOOR_WALL_BOTTOM = WALL_SIZE_BOTTOM + FLOOR_SIZE_H
-CEIL_HEIGHT = 90
+CEIL_HEIGHT = 98
+BOSS_FLOOR_SIZE_W = 164
+BOSS_FLOOR_SIZE_H = 144
+BOSS_FLOOR_BOTTOM = 5
+BOSS_WALL_SIZE_SIDE = 16
 
 TOWER_SKIP = 40
 TOWER_INIT_SKIP_H = 10
 
-DIFFICULTY = "normal"
-PROBLEM_NUMBER = 0
+ENEMY_NUM = 7
+EQUIP_NUM = 5
+
+DIFFICULTY_LIST = (
+    "easy",
+    "normal",
+    "Caratheodory"
+)
+
+LOAD_PATH = (
+    "../assets/fighter.pyxres",
+    "../assets/enemy.pyxres"
+)
+
+difficult_receive = int(sys.stdin.read())
+print(difficult_receive)
+DIFFICULTY = DIFFICULTY_LIST[difficult_receive]
+# DIFFICULTY = DIFFICULTY_LIST[2]
+PROBLEM_NUMBER = -1
+
+if DIFFICULTY == DIFFICULTY_LIST[2]:
+    BOSS_FLOOR_SIZE_W = 204
+    BOSS_FLOOR_SIZE_H = 132
+    BOSS_FLOOR_BOTTOM = 5
+    BOSS_WALL_SIZE_SIDE = 16
+
+
+def load_bgm(msc, filename, snd1, snd2, snd3):
+    import json
+
+    with open(filename, "rt") as file:
+        bgm = json.loads(file.read())
+        pyxel.sound(snd1).set(*bgm[0])
+        pyxel.sound(snd2).set(*bgm[1])
+        pyxel.sound(snd3).set(*bgm[2])
+        pyxel.music(msc).set([snd1], [snd2], [snd3], [])
 
 COL_BACKGROUND = 3
 COL_BODY = 11
@@ -41,12 +80,22 @@ class App:
         pyxel.init(DISPALY_SIZE_W, DISPALY_SIZE_H, title="kuso game")
         pyxel.mouse(True)
         self.info()
+        # load_bgm(0, "../assets/bgm.json", 0, 1, 2)
+        # pyxel.playm(0, loop=True)
         pyxel.run(self.update, self.draw)
 
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
+        if self.fighter_now < self.tower_num:
+            # slideを後にすることで1フレームだけ戻るということがなくなる!!!
+            self.update_fighter(TOWER_SKIP + FLOOR_WALL_SIDE)
+            self.update_slide(self.fighter_now *
+                              (TOWER_SKIP + FLOOR_WALL_SIDE),
+                              len(self.tower_info[self.fighter_now]))
+
+    def draw(self):
         # おめでとう的なのをしたい
         if self.fighter_now >= self.tower_num:
             pyxel.cls(0)
@@ -65,14 +114,8 @@ class App:
             pyxel.show()
             pyxel.quit()
 
-        # slideを後にすることで1フレームだけ戻るということがなくなる!!!
-        self.update_fighter(TOWER_SKIP + FLOOR_WALL_SIDE)
-        self.update_slide(self.fighter_now * (TOWER_SKIP + FLOOR_WALL_SIDE),
-                          len(self.tower_info[self.fighter_now]))
-
-    def draw(self):
-        pyxel.cls(11)
         if not self.death:
+            self.draw_back()
             self.draw_tower(self.left_slide,
                             TOWER_SKIP + FLOOR_WALL_SIDE,
                             FLOOR_WALL_BOTTOM)
@@ -80,20 +123,29 @@ class App:
                             TOWER_SKIP + FLOOR_WALL_SIDE,
                             FLOOR_WALL_BOTTOM)
             if self.is_fighting:
-                self.draw_enemy(self.left_slide,
-                                TOWER_SKIP + FLOOR_WALL_SIDE,
-                                FLOOR_WALL_BOTTOM)
-                pyxel.load(self.load_path[0])
-                self.draw_fighter(self.left_slide,
-                                  TOWER_SKIP + FLOOR_WALL_SIDE,
-                                  FLOOR_WALL_BOTTOM)
-            else:
-                self.draw_fighter(self.left_slide,
-                                  TOWER_SKIP + FLOOR_WALL_SIDE,
-                                  FLOOR_WALL_BOTTOM)
-                self.draw_enemy(self.left_slide,
-                                TOWER_SKIP + FLOOR_WALL_SIDE,
-                                FLOOR_WALL_BOTTOM)
+                if (
+                    self.fighter_now == self.tower_num - 1 and
+                    not self.can_win_boss
+                ):
+                    self.draw_fighter(self.left_slide,
+                                      TOWER_SKIP + FLOOR_WALL_SIDE,
+                                      FLOOR_WALL_BOTTOM)
+                    self.draw_enemy(self.left_slide,
+                                    TOWER_SKIP + FLOOR_WALL_SIDE,
+                                    FLOOR_WALL_BOTTOM)
+                else:
+                    self.draw_enemy(self.left_slide,
+                                    TOWER_SKIP + FLOOR_WALL_SIDE,
+                                    FLOOR_WALL_BOTTOM)
+                    pyxel.load(LOAD_PATH[0], image=True)
+                    self.draw_fighter(self.left_slide,
+                                      TOWER_SKIP + FLOOR_WALL_SIDE,
+                                      FLOOR_WALL_BOTTOM)
+        else:
+            self.draw_fighter(self.left_slide,
+                              TOWER_SKIP + FLOOR_WALL_SIDE,
+                              FLOOR_WALL_BOTTOM)
+            self.draw_enemy(self.left_slide,
         else:
             pyxel.cls(col=COL_DEATH)
             display_text = TEXT_DEATH[:]
@@ -108,13 +160,13 @@ class App:
                     self.info()
 
 
-        # debug
-        pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
-        floor_idx = (DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
-                     pyxel.mouse_y) // FLOOR_WALL_BOTTOM
-        pyxel.text(0, 0, f"{floor_idx}", 0)
-        pyxel.text(10, 10, f"{self.fighter_strength}", 0)
-        pyxel.text(10, 20, f"{self.passed}", 0)
+        # # debug
+        # pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
+        # floor_idx = (DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
+        #              pyxel.mouse_y) // FLOOR_WALL_BOTTOM
+        # pyxel.text(0, 0, f"{floor_idx}", 0)
+        # pyxel.text(10, 10, f"{self.fighter_strength}", 0)
+        # pyxel.text(10, 20, f"{self.passed}", 0)
 
     def update_slide(self, p, le):
         # スライドしている最中
@@ -189,13 +241,37 @@ class App:
             self.on_fighting = -1
             self.passed += 1
 
+        elif (
+            self.is_fighting and
+            (pyxel.frame_count - self.fighting_time) == 22
+        ):
+            t = self.tower_info[self.fighter_now][self.on_fighting][0]
+            pyxel.load(LOAD_PATH[0], sound=True)
+            pyxel.play(3, t - 1)
+
         # クリックされたとき
         elif (
             pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT) and
             self.left_slide == self.fighter_now * S and
             not (self.is_fighting)
         ):
-            if (
+            if self.fighter_now == self.tower_num - 1:
+                if (
+                    pyxel.mouse_x >= TOWER_SKIP + S + 20 and
+                    pyxel.mouse_x <= TOWER_SKIP + S + BOSS_FLOOR_SIZE_W -
+                    20 and
+                    pyxel.mouse_y <= DISPALY_SIZE_H - TOWER_INIT_SKIP_H and
+                    pyxel.mouse_y >= DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
+                    BOSS_FLOOR_SIZE_H + 40
+                ):
+                    if self.tower_info[self.fighter_now][0][0] != 0:
+                        self.is_fighting = True
+                        self.on_fighting = 0
+                        self.fighting_time = pyxel.frame_count
+                        _, _, m, _ = self.tower_info[self.fighter_now][0]
+                        if m <= self.fighter_strength:
+                            self.can_win_boss = True
+            elif (
                 pyxel.mouse_x >= TOWER_SKIP + S and
                 pyxel.mouse_x <= 2 * S
             ):
@@ -213,24 +289,46 @@ class App:
                         self.on_fighting = idx
                         self.fighting_time = pyxel.frame_count
 
+    # 背景
+    def draw_back(self):
+        u = (
+            (0, 0, 0, 0, 0, 256, 256),
+            (256, 0, 0, 0, 0, 256, 256),
+            (512, 0, 0, 0, 0, 128, 256),
+            (0, 256, 0, 0, 0, 256, 108),
+            (256, 256, 0, 0, 0, 256, 108),
+            (512, 256, 0, 0, 0, 128, 108)
+        )
+        for i in range(6):
+            pyxel.image(0).load(0, 0, f"../assets/back{i + 1}.png")
+            pyxel.blt(u[i][0], u[i][1], u[i][2], u[i][3],
+                      u[i][4], u[i][5], u[i][6])
+
     # 最後はボスにするかもしれないので確定ではない
     def draw_tower(self, slide, S, Q):
         # タワーの表示
         w = (
-            (0, CEIL_HEIGHT, 0, 140, 8, 92, 90, 5),
+            (4, CEIL_HEIGHT, 0, 136, 0, 100, CEIL_HEIGHT, 5),
             (0, Q, 0, 140, 98, 92, 58, 5)
         )
 
         # タワーは最初
-        pyxel.load(self.load_path[0])
+        pyxel.load(LOAD_PATH[0], image=True)
         idx = 0
         # 最初のタワー
         pyxel.blt(
-            TOWER_SKIP - slide, DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
-            w[idx][1], w[idx][2], w[idx][3], w[idx][4],
+            TOWER_SKIP - slide - w[idx][0], DISPALY_SIZE_H -
+            TOWER_INIT_SKIP_H - w[idx][1], w[idx][2], w[idx][3], w[idx][4],
             w[idx][5], w[idx][6], w[idx][7]
         )
-        for i in range(self.tower_num):
+        pyxel.line(
+            TOWER_SKIP - slide,
+            DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
+            TOWER_SKIP - slide + FLOOR_WALL_SIDE - 1,
+            DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
+            0
+        )
+        for i in range(self.tower_num - 1):
             T = len(self.tower_info[i])
             for j in range(T):
                 # 最上階だけ特別
@@ -239,11 +337,32 @@ class App:
                     idx = 0
 
                 pyxel.blt(
-                    TOWER_SKIP + S * (i + 1) - slide,
+                    TOWER_SKIP + S * (i + 1) - slide - w[idx][0],
                     DISPALY_SIZE_H - TOWER_INIT_SKIP_H - Q * j -
-                    + w[idx][1], w[idx][2], w[idx][3], w[idx][4],
+                    w[idx][1], w[idx][2], w[idx][3], w[idx][4],
                     w[idx][5], w[idx][6], w[idx][7]
                 )
+
+            pyxel.line(
+                TOWER_SKIP + S * (i + 1) - slide,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
+                TOWER_SKIP + S * (i + 1) - slide + FLOOR_WALL_SIDE - 1,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - 1,
+                0
+            )
+
+        if DIFFICULTY == DIFFICULTY_LIST[2]:
+            pyxel.blt(
+                TOWER_SKIP + S * self.tower_num - slide,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
+                2, 40, 125, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
+            )
+        else:
+            pyxel.blt(
+                TOWER_SKIP + S * self.tower_num - slide,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
+                1, 88, 112, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
+            )
 
     # 武器
     def draw_equip(self, slide, S, Q):
@@ -289,11 +408,27 @@ class App:
             ((3, 1, 0, 3, 73, 26, 30, 15), (3, 1, 0, 35, 73, 26, 30, 15)),
             ((6, 1, 0, 0, 104, 24, 32, 15), (6, 1, 0, 32, 104, 24, 32, 15)),
             ((3, 1, 0, 0, 143, 26, 33, 15), (3, 1, 0, 32, 143, 26, 33, 15)),
-            ((2, 1, 0, 56, 0, 32, 24, 15), (2, 1, 0, 88, 0, 32, 24, 15))
+            ((2, 1, 0, 56, 0, 32, 24, 15), (2, 1, 0, 88, 0, 32, 24, 15)),
+            ((0, 1, 0, 191, 101, 53, 58, 15),
+             (0, 1, 1, 191, 103, 53, 56, 15)),
+            ((10, 1, 0, 191, 101, 53, 58, 15),
+             (10, 1, 1, 201, 164, 45, 60, 15),
+             (10, 1, 0, 191, 168, 57, 53, 15)),
+            ((10, 1, 0, 191, 101, 53, 58, 15),
+             (10, 1, 1, 201, 164, 45, 60, 15),
+             (10, 1, 2, 184, 169, 62, 55, 15)),
+            ((20, 15, 0, 160, 3, 88, 93, 15),
+             (20, 12, 1, 160, 3, 88, 93, 15)),
+            ((-5, 0, 0, 160, 3, 88, 93, 15),
+             (-5, 1, 2, 27, 3, 93, 93, 15),
+             (-5, 0, 2, 28, 101, 90, 91, 15)),
+            ((-10, 0, 0, 160, 3, 88, 93, 15),
+             (-10, 1, 2, 27, 3, 93, 93, 15),
+             (0, 0, 2, 136, 3, 102, 93, 15))
         )
 
-        pyxel.load(self.load_path[1])
-        for i in range(self.tower_num):
+        pyxel.load(LOAD_PATH[1], image=True)
+        for i in range(self.tower_num - 1):
             T = len(self.tower_info[i])
             for j in range(T):
                 t, b, m, idx = self.tower_info[i][j]
@@ -317,21 +452,84 @@ class App:
                         u[idx][k][5], u[idx][k][6], u[idx][k][7]
                     )
 
+        i = self.tower_num - 1
+        j = 0
+        t, b, m, idx = self.tower_info[i][j]
+        if not (
+            self.on_fighting == 0 and
+            self.fighter_now == self.tower_num - 1
+        ):
+            k = (pyxel.frame_count) // 25 % 2  # 一般には % len(u[idx])
+            # 変わる
+            idx = 10 if DIFFICULTY == DIFFICULTY_LIST[2] else 7
+            tmp = (BOSS_FLOOR_SIZE_W + u[idx][k][5]) / 2
+            self.draw_number(
+                S * (i + 1) + TOWER_SKIP + BOSS_FLOOR_SIZE_W - tmp - slide +
+                u[idx][k][5] / 2,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_BOTTOM -
+                (u[idx][k][1] + u[idx][k][6]) - 15,
+                t, b, m
+            )
+            pyxel.blt(
+                S * (i + 1) + TOWER_SKIP + BOSS_FLOOR_SIZE_W - tmp - slide +
+                u[idx][k][0],
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_BOTTOM + 1 -
+                (u[idx][k][1] + u[idx][k][6]),
+                u[idx][k][2], u[idx][k][3], u[idx][k][4],
+                u[idx][k][5], u[idx][k][6], u[idx][k][7]
+            )
+        else:
+            k = (pyxel.frame_count - self.fighting_time) // 10 % 3
+            if DIFFICULTY == DIFFICULTY_LIST[2]:
+                # 変わる
+                idx = 11 if self.can_win_boss else 12
+            else:
+                idx = 8 if self.can_win_boss else 9
+            tmp = u[idx][k][5] + u[idx][k][0] + BOSS_WALL_SIZE_SIDE + 10
+            self.draw_number(
+                S * (i + 1) + TOWER_SKIP + BOSS_FLOOR_SIZE_W - tmp - slide +
+                u[idx][k][5] / 2,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_BOTTOM -
+                (u[idx][k][1] + u[idx][k][6]) - 15,
+                t, b, m
+            )
+            pyxel.blt(
+                S * (i + 1) + TOWER_SKIP + BOSS_FLOOR_SIZE_W - tmp - slide,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_BOTTOM + 1 -
+                (u[idx][k][1] + u[idx][k][6]),
+                u[idx][k][2], u[idx][k][3], u[idx][k][4],
+                u[idx][k][5], u[idx][k][6], u[idx][k][7]
+            )
 
     # ファイター
     def draw_fighter(self, slide, S, Q):
         # 撃退アニメーション
         u = (
             (
-                (0, 1, 0, 32, 16, 32, 40, 5),
-                (6, 1, 0, 32, 56, 32, 40, 5),
-                (3, 1, 0, 64, 56, 40, 40, 5)
+                (-20, 1, 0, 32, 16, 32, 40, 5),
+                (-13, 1, 0, 32, 56, 32, 40, 5),
+                (10, 1, 0, 64, 56, 40, 40, 5)
             ),
             (
                 (2, 1, 0, 32, 16, 32, 40, 5),
                 (-4, 1, 0, 28, 96, 35, 40, 5),
                 (2, 1, 0, 63, 96, 45, 40, 5)
-            )
+            ),
+            (
+                (-15, 1, 0, 32, 16, 32, 40, 5),
+                (-19, 1, 0, 28, 96, 35, 40, 5),
+                (-18, 1, 0, 35, 152, 31, 32, 5)
+            ),
+            (
+                (-25, 1, 0, 32, 16, 32, 40, 5),
+                (-29, 1, 0, 28, 96, 35, 40, 5),
+                (-28, 1, 0, 35, 152, 31, 32, 5)
+            ),
+            (
+                (-27, 1, 0, 32, 16, 32, 40, 5),
+                (-20, 1, 0, 32, 56, 32, 40, 5),
+                (10, 1, 0, 64, 56, 40, 40, 5)
+            ),
         )
 
         # 武器入手アニメーション
@@ -350,7 +548,29 @@ class App:
         # 戦っているときのアニメーション
         if self.is_fighting:
             # 倒すときのアニメーション
-            if self.tower_info[self.fighter_now][self.on_fighting][0] == 1:
+            if self.fighter_now == self.tower_num - 1:
+                i = self.tower_num - 1
+                j = 0
+                k = (pyxel.frame_count - self.fighting_time) // 10 % 3
+                idx = 0 if self.can_win_boss else 2
+                if DIFFICULTY == DIFFICULTY_LIST[2]:
+                    idx = 4 if self.can_win_boss else 3
+                tmp = BOSS_FLOOR_SIZE_W / 2 - u[idx][k][5]
+                self.draw_number(
+                    S + TOWER_SKIP + BOSS_WALL_SIZE_SIDE + tmp
+                    + u[idx][k][5] / 2 + u[idx][k][0],
+                    DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_BOTTOM -
+                    u[idx][k][6] - 10,
+                    1, -1, self.fighter_strength
+                )
+                pyxel.blt(
+                    S + TOWER_SKIP + BOSS_WALL_SIZE_SIDE + tmp + u[idx][k][0],
+                    DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_BOTTOM +
+                    1 - (u[idx][k][1] + u[idx][k][6]),
+                    u[idx][k][2], u[idx][k][3], u[idx][k][4],
+                    u[idx][k][5], u[idx][k][6], u[idx][k][7]
+                )
+            elif self.tower_info[self.fighter_now][self.on_fighting][0] == 1:
                 j = 1
                 i = (pyxel.frame_count - self.fighting_time) // 10 % len(u[j])
 
@@ -436,12 +656,13 @@ class App:
                     tmpx = gf[b - 1][3]
                     tmpy = gf[b - 1][4]
                     if b in [2, 4]:
-                        tmpx -= 80 
+                        tmpx -= 80
                         tmpy += 8
                         tmp = 1
                     pyxel.blt(
                         x - (pow + 1) * 4 + gf[b - 1][0], y + gf[b - 1][1] + 1,
-                        tmp, tmpx, tmpy, gf[b - 1][5], gf[b - 1][6], gf[b - 1][7]
+                        tmp, tmpx, tmpy, gf[b - 1][5],
+                        gf[b - 1][6], gf[b - 1][7]
                     )
                     continue
 
@@ -481,14 +702,7 @@ class App:
 
 
         #
-        self.load_path = (
-            "../assets/fighter.pyxres",
-            "../assets/enemy.pyxres"
-        )
-
-        #
-        self.enemy_num = 7
-        self.equip_num = 5
+        self.can_win_boss = False
 
         # テキストから問題を読み込む
         with open(f"../problem/{DIFFICULTY}/{PROBLEM_NUMBER}.txt") as f:
@@ -508,9 +722,9 @@ class App:
                     b = list(map(int, line.rstrip("\n").split()))
 
                     if b[0] == 1:
-                        b.append(pyxel.rndi(0, self.enemy_num - 1))
+                        b.append(pyxel.rndi(0, ENEMY_NUM - 1))
                     else:
-                        b.append(pyxel.rndi(0, self.equip_num - 1))
+                        b.append(pyxel.rndi(0, EQUIP_NUM - 1))
                     a.append(b)
                 self.tower_info.append(a)
             self.max_strength = int(f.readline().rstrip())

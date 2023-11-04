@@ -36,7 +36,9 @@ LOAD_PATH = (
     "../assets/enemy.pyxres",
     "../assets/bgm.json",
     "../assets/gameclear.pyxres",
-    "../assets/gameover.pyxres"
+    "../assets/gameover.pyxres",
+    "../assets/gameclear_bgm.json",
+    "../assets/gameover_bgm.json"
 )
 
 difficult_receive, PROBLEM_NUMBER = list(map(int, sys.stdin.read().split()))
@@ -68,8 +70,6 @@ class App:
         pyxel.init(DISPALY_SIZE_W, DISPALY_SIZE_H, title="kuso game")
         pyxel.mouse(True)
         self.info()
-        load_bgm(0, LOAD_PATH[2], 0, 1, 2)
-        pyxel.playm(0, loop=True)
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -89,6 +89,10 @@ class App:
     def draw(self):
         # おめでとう的なのをしたい
         if self.fighter_now >= self.tower_num:
+            if self.fighter_now == self.tower_num:
+                self.fighter_now += 1
+                load_bgm(0, LOAD_PATH[5], 0, 1, 2)
+                pyxel.playm(0, loop=True)
             pyxel.cls(COL_CLEAR)
             pyxel.load(LOAD_PATH[3], image=True)
             u = (
@@ -141,6 +145,10 @@ class App:
                                 TOWER_SKIP + FLOOR_WALL_SIDE,
                                 FLOOR_WALL_BOTTOM)
         else:
+            if self.is_1frame_after_death:
+                self.is_1frame_after_death = False
+                load_bgm(0, LOAD_PATH[6], 0, 1, 2)
+                pyxel.playm(0, loop=True)
             pyxel.cls(col=COL_DEATH)
             # display_text.insert(1, f"{self.fighter_strength:04}")
             pyxel.load(LOAD_PATH[4], image=True)
@@ -689,7 +697,13 @@ class App:
         self.death = False
 
         #
+        self.is_1frame_after_death = True
+
+        #
         self.can_win_boss = False
+
+        load_bgm(0, LOAD_PATH[2], 0, 1, 2)
+        pyxel.playm(0, loop=True)
 
         # テキストから問題を読み込む
         with open(f"../problem/{DIFFICULTY}/{PROBLEM_NUMBER}.txt") as f:

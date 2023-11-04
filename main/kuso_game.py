@@ -356,7 +356,7 @@ class App:
             pyxel.blt(
                 TOWER_SKIP + S * self.tower_num - slide,
                 DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
-                1, 88, 112, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 15
+                1, 88, 112, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
             )
 
     # 武器

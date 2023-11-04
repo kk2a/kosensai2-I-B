@@ -653,13 +653,9 @@ class App:
                 if i == 0:
                     tmpx = gf[b - 1][3]
                     tmpy = gf[b - 1][4]
-                    if b in [2, 4]:
-                        tmpx -= 80
-                        tmpy += 8
-                        tmp = 1
                     pyxel.blt(
                         x - (pow + 1) * 4 + gf[b - 1][0], y + gf[b - 1][1] + 1,
-                        tmp, tmpx, tmpy, gf[b - 1][5],
+                        0, tmpx, tmpy, gf[b - 1][5],
                         gf[b - 1][6], gf[b - 1][7]
                     )
                     continue

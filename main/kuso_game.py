@@ -76,6 +76,9 @@ class App:
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
+        if pyxel.btnp(pyxel.KEY_R):
+            self.info()
+
         if self.fighter_now < self.tower_num:
             # slideを後にすることで1フレームだけ戻るということがなくなる!!!
             self.update_fighter(TOWER_SKIP + FLOOR_WALL_SIDE)

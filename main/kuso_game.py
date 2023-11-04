@@ -349,13 +349,13 @@ class App:
         if DIFFICULTY == DIFFICULTY_LIST[2]:
             pyxel.blt(
                 TOWER_SKIP + S * self.tower_num - slide,
-                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H + 1,
                 2, 40, 125, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
             )
         else:
             pyxel.blt(
                 TOWER_SKIP + S * self.tower_num - slide,
-                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H + 1,
                 1, 88, 112, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
             )
 

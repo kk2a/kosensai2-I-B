@@ -19,29 +19,39 @@ BOSS_WALL_SIZE_SIDE = 16
 TOWER_SKIP = 40
 TOWER_INIT_SKIP_H = 10
 
+ENEMY_NUM = 7
+EQUIP_NUM = 5
+
+COL_DEATH = 0
+COL_CLEAR = 7
+
 DIFFICULTY_LIST = (
     "easy",
     "normal",
     "Caratheodory"
 )
 
-difficult_receive = int(sys.stdin.read())
-print(difficult_receive)
+LOAD_PATH = (
+    "../assets/fighter.pyxres",
+    "../assets/enemy.pyxres",
+    "../assets/bgm.json",
+    "../assets/gameclear.pyxres",
+    "../assets/gameover.pyxres",
+    "../assets/gameclear_bgm.json",
+    "../assets/gameover_bgm.json"
+)
+
+difficult_receive, PROBLEM_NUMBER = list(map(int, sys.stdin.read().split()))
+# print(difficult_receive)
 DIFFICULTY = DIFFICULTY_LIST[difficult_receive]
 # DIFFICULTY = DIFFICULTY_LIST[2]
-PROBLEM_NUMBER = -1
+# PROBLEM_NUMBER = -1
 
 if DIFFICULTY == DIFFICULTY_LIST[2]:
     BOSS_FLOOR_SIZE_W = 204
     BOSS_FLOOR_SIZE_H = 132
     BOSS_FLOOR_BOTTOM = 5
     BOSS_WALL_SIZE_SIDE = 16
-
-
-LOAD_PATH = (
-    "../assets/fighter.pyxres",
-    "../assets/enemy.pyxres"
-)
 
 
 def load_bgm(msc, filename, snd1, snd2, snd3):
@@ -60,13 +70,14 @@ class App:
         pyxel.init(DISPALY_SIZE_W, DISPALY_SIZE_H, title="kuso game")
         pyxel.mouse(True)
         self.info()
-        # load_bgm(0, "../assets/bgm.json", 0, 1, 2)
-        # pyxel.playm(0, loop=True)
         pyxel.run(self.update, self.draw)
 
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
+
+        if pyxel.btnp(pyxel.KEY_R):
+            self.info()
 
         if self.fighter_now < self.tower_num:
             # slideを後にすることで1フレームだけ戻るということがなくなる!!!
@@ -78,64 +89,91 @@ class App:
     def draw(self):
         # おめでとう的なのをしたい
         if self.fighter_now >= self.tower_num:
-            pyxel.cls(0)
-            pyxel.text(
-                DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2,
-                "Congraturation!", 1
+            if self.fighter_now == self.tower_num:
+                self.fighter_now += 1
+                load_bgm(0, LOAD_PATH[5], 0, 1, 2)
+                pyxel.playm(0, loop=True)
+            pyxel.cls(COL_CLEAR)
+            pyxel.load(LOAD_PATH[3], image=True)
+            u = (
+                (0, 0, 0, 240, 48, 7),
+                (-1, -1)
             )
-            pyxel.text(
-                DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2 + 5,
-                f"your strength is {self.fighter_strength}!!", 1
-            )
-            pyxel.text(
-                DISPALY_SIZE_W / 2 - 50, DISPALY_SIZE_H / 2 + 10,
-                f"max strength is {self.max_strength}!!", 1
-            )
-            pyxel.show()
-            pyxel.quit()
+            tmp = (DISPALY_SIZE_H - 48) / 2  # 48 = \sum_{i} u[i][4]
+            for i in range(1):
+                pyxel.blt((DISPALY_SIZE_W - u[i][3]) / 2, tmp + 32 * i,
+                          u[i][0], u[i][1], u[i][2],
+                          u[i][3], u[i][4], u[i][5])
+                if pyxel.btnp(pyxel.KEY_Q):
+                    pyxel.quit()
+                if pyxel.btnp(pyxel.KEY_R):
+                    self.info()
+            return
 
-        pyxel.cls(11)
-        self.draw_back()
-        self.draw_tower(self.left_slide,
-                        TOWER_SKIP + FLOOR_WALL_SIDE,
-                        FLOOR_WALL_BOTTOM)
-        self.draw_equip(self.left_slide,
-                        TOWER_SKIP + FLOOR_WALL_SIDE,
-                        FLOOR_WALL_BOTTOM)
-        if self.is_fighting:
-            if (
-                self.fighter_now == self.tower_num - 1 and
-                not self.can_win_boss
-            ):
-                self.draw_fighter(self.left_slide,
-                                  TOWER_SKIP + FLOOR_WALL_SIDE,
-                                  FLOOR_WALL_BOTTOM)
-                self.draw_enemy(self.left_slide,
-                                TOWER_SKIP + FLOOR_WALL_SIDE,
-                                FLOOR_WALL_BOTTOM)
-            else:
-                self.draw_enemy(self.left_slide,
-                                TOWER_SKIP + FLOOR_WALL_SIDE,
-                                FLOOR_WALL_BOTTOM)
-                pyxel.load(LOAD_PATH[0], image=True)
-                self.draw_fighter(self.left_slide,
-                                  TOWER_SKIP + FLOOR_WALL_SIDE,
-                                  FLOOR_WALL_BOTTOM)
-        else:
-            self.draw_fighter(self.left_slide,
-                              TOWER_SKIP + FLOOR_WALL_SIDE,
-                              FLOOR_WALL_BOTTOM)
-            self.draw_enemy(self.left_slide,
+        if not self.death:
+            self.draw_back()
+            self.draw_tower(self.left_slide,
                             TOWER_SKIP + FLOOR_WALL_SIDE,
                             FLOOR_WALL_BOTTOM)
+            self.draw_equip(self.left_slide,
+                            TOWER_SKIP + FLOOR_WALL_SIDE,
+                            FLOOR_WALL_BOTTOM)
+            if self.is_fighting:
+                if (
+                    self.fighter_now == self.tower_num - 1 and
+                    not self.can_win_boss
+                ):
+                    self.draw_fighter(self.left_slide,
+                                      TOWER_SKIP + FLOOR_WALL_SIDE,
+                                      FLOOR_WALL_BOTTOM)
+                    self.draw_enemy(self.left_slide,
+                                    TOWER_SKIP + FLOOR_WALL_SIDE,
+                                    FLOOR_WALL_BOTTOM)
+                else:
+                    self.draw_enemy(self.left_slide,
+                                    TOWER_SKIP + FLOOR_WALL_SIDE,
+                                    FLOOR_WALL_BOTTOM)
+                    pyxel.load(LOAD_PATH[0], image=True)
+                    self.draw_fighter(self.left_slide,
+                                      TOWER_SKIP + FLOOR_WALL_SIDE,
+                                      FLOOR_WALL_BOTTOM)
+            else:
+                self.draw_fighter(self.left_slide,
+                                  TOWER_SKIP + FLOOR_WALL_SIDE,
+                                  FLOOR_WALL_BOTTOM)
+                self.draw_enemy(self.left_slide,
+                                TOWER_SKIP + FLOOR_WALL_SIDE,
+                                FLOOR_WALL_BOTTOM)
+        else:
+            if self.is_1frame_after_death:
+                self.is_1frame_after_death = False
+                load_bgm(0, LOAD_PATH[6], 0, 1, 2)
+                pyxel.playm(0, loop=True)
+            pyxel.cls(col=COL_DEATH)
+            # display_text.insert(1, f"{self.fighter_strength:04}")
+            pyxel.load(LOAD_PATH[4], image=True)
+            u = (
+                (0, 0, 0, 256, 32, 1),
+                (0, 0, 33, 96, 32, 1),
+                (0, 0, 64, 96, 32, 1)
+            )
+            tmp = (DISPALY_SIZE_H - 32 * 3) / 2  # 32 * 3 = \sum_{i}u[i][4]
+            for i in range(3):
+                pyxel.blt((DISPALY_SIZE_W - u[i][3]) / 2, tmp + 32 * i,
+                          u[i][0], u[i][1], u[i][2],
+                          u[i][3], u[i][4], u[i][5])
+                if pyxel.btnp(pyxel.KEY_Q):
+                    pyxel.quit()
+                if pyxel.btnp(pyxel.KEY_R):
+                    self.info()
 
-        # debug
-        pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
-        floor_idx = (DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
-                     pyxel.mouse_y) // FLOOR_WALL_BOTTOM
-        pyxel.text(0, 0, f"{floor_idx}", 0)
-        pyxel.text(10, 10, f"{self.fighter_strength}", 0)
-        pyxel.text(10, 20, f"{self.passed}", 0)
+        # # debug
+        # pyxel.text(50, 10, f"{pyxel.mouse_x}, {pyxel.mouse_y}", 0)
+        # floor_idx = (DISPALY_SIZE_H - TOWER_INIT_SKIP_H -
+        #              pyxel.mouse_y) // FLOOR_WALL_BOTTOM
+        # pyxel.text(0, 0, f"{floor_idx}", 0)
+        # pyxel.text(10, 10, f"{self.fighter_strength}", 0)
+        # pyxel.text(10, 20, f"{self.passed}", 0)
 
     def update_slide(self, p, le):
         # スライドしている最中
@@ -201,6 +239,7 @@ class App:
             # ここでゲームオーバーだと思う
             if not f:
                 self.on_fighting = -1
+                self.death = True
                 return
 
             # 成功
@@ -321,13 +360,13 @@ class App:
         if DIFFICULTY == DIFFICULTY_LIST[2]:
             pyxel.blt(
                 TOWER_SKIP + S * self.tower_num - slide,
-                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H + 1,
                 2, 40, 125, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
             )
         else:
             pyxel.blt(
                 TOWER_SKIP + S * self.tower_num - slide,
-                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H,
+                DISPALY_SIZE_H - TOWER_INIT_SKIP_H - BOSS_FLOOR_SIZE_H + 1,
                 1, 88, 112, BOSS_FLOOR_SIZE_W, BOSS_FLOOR_SIZE_H, 5
             )
 
@@ -503,7 +542,7 @@ class App:
         v = (
             (2, 1, 0, 0, 16, 32, 40, 5),
             (2, 1, 0, 32, 16, 32, 40, 5),
-            (6, 2, 0, 5, 142, 27, 66, 5)
+            (6, 1, 0, 5, 142, 27, 66, 5)
         )
 
         # 待機アニメーション
@@ -622,13 +661,9 @@ class App:
                 if i == 0:
                     tmpx = gf[b - 1][3]
                     tmpy = gf[b - 1][4]
-                    if b in [2, 4]:
-                        tmpx -= 80
-                        tmpy += 8
-                        tmp = 1
                     pyxel.blt(
                         x - (pow + 1) * 4 + gf[b - 1][0], y + gf[b - 1][1] + 1,
-                        tmp, tmpx, tmpy, gf[b - 1][5],
+                        0, tmpx, tmpy, gf[b - 1][5],
                         gf[b - 1][6], gf[b - 1][7]
                     )
                     continue
@@ -659,13 +694,16 @@ class App:
         self.on_fighting = -1
         self.fighting_time = 0
         self.thinking = 0  # 自己満足です
+        self.death = False
+
+        #
+        self.is_1frame_after_death = True
 
         #
         self.can_win_boss = False
 
-        #
-        self.enemy_num = 7
-        self.equip_num = 5
+        load_bgm(0, LOAD_PATH[2], 0, 1, 2)
+        pyxel.playm(0, loop=True)
 
         # テキストから問題を読み込む
         with open(f"../problem/{DIFFICULTY}/{PROBLEM_NUMBER}.txt") as f:
@@ -685,9 +723,9 @@ class App:
                     b = list(map(int, line.rstrip("\n").split()))
 
                     if b[0] == 1:
-                        b.append(pyxel.rndi(0, self.enemy_num - 1))
+                        b.append(pyxel.rndi(0, ENEMY_NUM - 1))
                     else:
-                        b.append(pyxel.rndi(0, self.equip_num - 1))
+                        b.append(pyxel.rndi(0, EQUIP_NUM - 1))
                     a.append(b)
                 self.tower_info.append(a)
             self.max_strength = int(f.readline().rstrip())
